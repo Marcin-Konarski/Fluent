@@ -5,9 +5,9 @@ import javax.inject.Inject
 class DataRepositoryImpl @Inject constructor() : DataRepository {
     // Sample data
     private val data = listOf(
-        SampleData(1, "Word 1", "Translation 1"),
-        SampleData(2, "Word 2", "Translation 2"),
-        SampleData(3, "Word 3", "Translation 3")
+        SampleData(1, "Maester", "An order of scholars, healers, and learned men"),
+        SampleData(2, "Unsullied", "Unblemished"),
+        SampleData(3, "Crapulous", "Hungover after too much alcohol")
     )
 
     override fun getSampleData(): List<SampleData> = data
