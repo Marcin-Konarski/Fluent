@@ -1,19 +1,29 @@
 package com.example.fluent.di
 
-import com.example.fluent.data.DataRepository
-import com.example.fluent.data.DataRepositoryImpl
+import android.app.Application
+import androidx.room.Room
+import com.example.fluent.data.WordDao
+import com.example.fluent.data.WordDatabase
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class AppModule {
-    @Binds
+class AppModule {
+    @Provides
     @Singleton
-    abstract fun bindDataRepository(
-        dataRepositoryImpl: DataRepositoryImpl
-    ): DataRepository
+    fun provideDatabase(app: Application): WordDatabase {
+        return Room.databaseBuilder(app, WordDatabase::class.java, "word_db").build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWordDao(db: WordDatabase): WordDao {
+        return db.dao
+    }
+
 }

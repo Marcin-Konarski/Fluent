@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,6 +21,7 @@ fun Screen1(
     onItemClick: (Int) -> Unit,
     onButtonClick: () -> Unit
 ) {
+    val items = viewModel.items.collectAsState(initial = emptyList()).value
     Scaffold(
         topBar = {
             TopAppBar(
@@ -40,7 +42,7 @@ fun Screen1(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            items(viewModel.items) { item ->
+            items(items) { item ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()

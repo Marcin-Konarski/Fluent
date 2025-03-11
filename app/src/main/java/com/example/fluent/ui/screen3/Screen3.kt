@@ -9,6 +9,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,8 +22,10 @@ import com.example.fluent.ui.screen1.Screen1ViewModel
 @Composable
 fun Screen3(
     viewModel: Screen3ViewModel = hiltViewModel(),
-    onButtonClick: () -> Unit
+    onButtonClick: () -> Unit,
 ) {
+    var word by remember { mutableStateOf("") }
+    var translation by remember { mutableStateOf("") }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -43,9 +49,7 @@ fun Screen3(
         ) {
             TextField(
                 value = "Word",
-                onValueChange = {
-
-                },
+                onValueChange = { word = it},
                 placeholder = {
                     Text(text = "word")
                 },
@@ -54,9 +58,7 @@ fun Screen3(
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
                 value = "Description",
-                onValueChange = {
-
-                },
+                onValueChange = { translation = it },
                 placeholder = {
                     Text(text = "description")
                 },
