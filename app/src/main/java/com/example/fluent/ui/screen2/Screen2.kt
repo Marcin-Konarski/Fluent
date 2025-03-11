@@ -6,6 +6,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -13,13 +14,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Screen2(
+    itemId: Int,
     viewModel: Screen2ViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
+    val item = viewModel.item.collectAsState().value
+
+    Text(text = "Item ID: $itemId")
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(viewModel.item.word) },
+                title = { Text("Go Back") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -38,13 +43,13 @@ fun Screen2(
                 .padding(16.dp)
         ) {
             Text(
-                text = viewModel.item.word,
+                text = item?.word ?: "",
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(16.dp))
             Card {
                 Text(
-                    text = viewModel.item.translation,
+                    text = item?.translation ?: "",
                     modifier = Modifier.padding(16.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )

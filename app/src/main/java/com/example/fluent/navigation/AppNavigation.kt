@@ -35,8 +35,14 @@ fun AppNavigation(navController: NavHostController) {
         composable(
             route = Screen.Screen2.route,
             arguments = listOf(navArgument("itemId") { type = NavType.IntType })
-        ) {
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getInt("itemId") ?: -1  // ✅ Default to -1 to avoid null crashes
+            if (itemId == -1) {
+                // Handle the error case (optional)
+                return@composable
+            }
             Screen2(
+                itemId = itemId,  // ✅ Pass the retrieved itemId
                 onBackClick = {
                     navController.popBackStack()
                 }

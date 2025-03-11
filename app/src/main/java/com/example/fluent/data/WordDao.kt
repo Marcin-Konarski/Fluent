@@ -16,7 +16,7 @@ interface WordDao {
     fun getSampleData(): Flow<List<Word>>
 
     @Query("SELECT * FROM Word WHERE ID = :id")
-    fun getDetailData(id: Int): Word
+    fun getDetailData(id: Int): Flow<Word?>
 
     @Delete
     suspend fun deleteWord(word: Word)
