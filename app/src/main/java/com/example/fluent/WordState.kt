@@ -6,5 +6,5 @@ data class WordState(
     val words: List<Word> = emptyList(),
     val word: String = "",
     val translation: String = "",
-    val isScreenVisible: Boolean = false
+    val id: Int = 0,
 )

@@ -3,7 +3,7 @@ package com.example.fluent.ui.screen3
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.fluent.WordEvent
+import com.example.fluent.WordEventForScreen3
 import com.example.fluent.WordState
 import com.example.fluent.data.Word
 import com.example.fluent.data.WordDao
@@ -26,14 +26,9 @@ class Screen3ViewModel @Inject constructor(
     private val _state = MutableStateFlow(WordState())
     val state = _state.asStateFlow() // Expose immutable state to UI
 
-    fun onEvent(event: WordEvent) {
-        when(event){
-            is WordEvent.deleteWord -> {
-                viewModelScope.launch {
-                    repository.deleteWord(event.word)
-                }
-            }
-            WordEvent.saveWord -> {
+    fun onEvent(event: WordEventForScreen3) {
+        when (event) {
+            WordEventForScreen3.saveWord -> {
                 val word = _state.value.word.trim()
                 val translation = _state.value.translation.trim()
 
@@ -51,15 +46,21 @@ class Screen3ViewModel @Inject constructor(
                     }
                 }
             }
-            is WordEvent.setWord -> {
-                _state.update { it.copy(
-                    word = event.word
-                ) }
+
+            is WordEventForScreen3.setWord -> {
+                _state.update {
+                    it.copy(
+                        word = event.word
+                    )
+                }
             }
-            is WordEvent.setTranslation -> {
-                _state.update { it.copy(
-                    translation = event.translation
-                ) }
+
+            is WordEventForScreen3.setTranslation -> {
+                _state.update {
+                    it.copy(
+                        translation = event.translation
+                    )
+                }
             }
         }
     }

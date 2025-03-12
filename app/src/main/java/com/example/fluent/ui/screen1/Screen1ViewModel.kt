@@ -3,7 +3,6 @@ package com.example.fluent.ui.screen1
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.fluent.WordEvent
 import com.example.fluent.WordState
 import com.example.fluent.data.WordDao
 import com.example.fluent.data.Word

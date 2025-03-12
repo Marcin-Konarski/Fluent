@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,7 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.fluent.WordEvent
+import com.example.fluent.WordEventForScreen3
+import com.example.fluent.data.Word
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,8 +29,6 @@ fun Screen3(
     onButtonClick: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-    var word by remember { mutableStateOf("") }
-    var translation by remember { mutableStateOf("") }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -37,7 +38,7 @@ fun Screen3(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onButtonClick()
-                viewModel.onEvent(WordEvent.saveWord)
+                viewModel.onEvent(WordEventForScreen3.saveWord)
             }) {
                 Icon(
                     imageVector = Icons.Default.Check,
@@ -54,7 +55,7 @@ fun Screen3(
         ) {
             TextField(
                 value = state.word,
-                onValueChange = { viewModel.onEvent(WordEvent.setWord(it)) },
+                onValueChange = { viewModel.onEvent(WordEventForScreen3.setWord(it)) },
                 placeholder = {
                     Text(text = "word")
                 },
@@ -63,13 +64,11 @@ fun Screen3(
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
                 value = state.translation,
-                onValueChange = { viewModel.onEvent(WordEvent.setTranslation(it)) },
+                onValueChange = { viewModel.onEvent(WordEventForScreen3.setTranslation(it)) },
                 placeholder = {
                     Text(text = "description")
                 },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = false,
-                maxLines = 5
             )
         }
     }
