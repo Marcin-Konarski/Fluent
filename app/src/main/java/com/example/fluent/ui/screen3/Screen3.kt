@@ -66,7 +66,7 @@ fun Screen3(
                 value = state.translation,
                 onValueChange = { viewModel.onEvent(WordEventForScreen3.setTranslation(it)) },
                 placeholder = {
-                    Text(text = "description")
+                    Text(text = "translation")
                 },
                 modifier = Modifier.fillMaxWidth(),
             )
