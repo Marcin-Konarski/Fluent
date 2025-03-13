@@ -17,10 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class Screen3ViewModel @Inject constructor(
     private val repository: WordDao,
-    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    // private val itemId: Int = checkNotNull(savedStateHandle["itemId"])
-    // val item: SampleData = repository.getDetailData(itemId)
 
     val items = repository.getSampleData() // Live Flow from database
     private val _state = MutableStateFlow(WordState())

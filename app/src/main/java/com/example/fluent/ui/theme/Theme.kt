@@ -19,7 +19,7 @@ private val DarkColors = darkColorScheme(
 )
 
 @Composable
-fun VerboTheme(
+fun FluentTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
