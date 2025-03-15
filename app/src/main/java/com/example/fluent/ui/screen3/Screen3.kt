@@ -1,32 +1,39 @@
 package com.example.fluent.ui.screen3
 
-import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForScreen3
-import com.example.fluent.data.Word
 import com.example.fluent.navigation.Screen
+import com.example.fluent.ui.theme.AquaBlue
+import com.example.fluent.ui.theme.DeepBlue
+import com.example.fluent.ui.theme.ElectricBlue
+import com.example.fluent.ui.theme.NavyBlue
+import com.example.fluent.ui.theme.SapphireBlue
+import com.example.fluent.ui.theme.SkyBlue
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,17 +57,22 @@ fun Screen3(
         Screen.Screen5.route -> 2
         else -> 0
     }
+    // Requesters to control focus (jumping from one text field to the second text filed)
+    val wordFocusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val gradientColors = listOf(SkyBlue, AquaBlue, ElectricBlue, DeepBlue, SapphireBlue, NavyBlue)
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = { Text("Add new word") }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onButtonClick()
-                viewModel.onEvent(WordEventForScreen3.saveWord)
+                viewModel.onEvent(WordEventForScreen3.SaveWord)
             }) {
                 Icon(
                     imageVector = Icons.Default.Check,
@@ -69,7 +81,10 @@ fun Screen3(
             }
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = Color.Transparent,
+                //modifier = Modifier.blur(radius = 16.dp)
+            ) {
                 navigationList.forEachIndexed { index, navigation ->
                     NavigationBarItem(
                         selected = selectedIndex == index,
@@ -97,22 +112,55 @@ fun Screen3(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            TextField(
+
+            OutlinedTextField(
                 value = state.word,
-                onValueChange = { viewModel.onEvent(WordEventForScreen3.setWord(it)) },
-                placeholder = {
-                    Text(text = "word")
+                onValueChange = { viewModel.onEvent(WordEventForScreen3.SetWord(it)) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        navController.popBackStack()
+                    }
+                ),
+                textStyle = TextStyle(
+                    brush = Brush.linearGradient(colors = gradientColors)
+                ),
+                label = {
+                    Text(text = "Word")
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             )
+
+
             Spacer(modifier = Modifier.height(8.dp))
-            TextField(
+
+
+            OutlinedTextField(
                 value = state.translation,
-                onValueChange = { viewModel.onEvent(WordEventForScreen3.setTranslation(it)) },
-                placeholder = {
+                onValueChange = { viewModel.onEvent(WordEventForScreen3.SetTranslation(it)) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        onButtonClick()
+                        viewModel.onEvent(WordEventForScreen3.SaveWord)
+                    }
+                ),
+                label = {
                     Text(text = "translation")
                 },
-                modifier = Modifier.fillMaxWidth(),
+                textStyle = TextStyle(
+                    brush = Brush.linearGradient(colors = gradientColors)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
             )
         }
     }

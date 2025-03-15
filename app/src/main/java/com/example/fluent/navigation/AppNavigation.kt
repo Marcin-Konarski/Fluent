@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.example.fluent.ui.screen1.Screen1
 import com.example.fluent.ui.screen2.Screen2
@@ -24,7 +25,10 @@ sealed class Screen(val route: String) {
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screen.Screen1.route) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Screen1.route
+    ) {
 
         composable(Screen.Screen1.route) {
             Screen1(
@@ -37,7 +41,6 @@ fun AppNavigation(navController: NavHostController) {
                 }
             )
         }
-
 
         composable(
             route = Screen.Screen2.route,
@@ -77,6 +80,5 @@ fun AppNavigation(navController: NavHostController) {
                 navController = navController,
             )
         }
-
     }
 }

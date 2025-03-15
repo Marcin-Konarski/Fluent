@@ -21,10 +21,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.fluent.WordEventForScreen3
 import com.example.fluent.navigation.Screen
 
 
@@ -51,7 +51,10 @@ fun Screen5(
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = Color.Transparent,
+                //modifier = Modifier.blur(radius = 16.dp)
+            ) {
                 navigationList.forEachIndexed { index, navigation ->
                     NavigationBarItem(
                         selected = selectedIndex == index,

@@ -1,5 +1,6 @@
 package com.example.fluent.ui.screen1
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,12 +18,17 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.navigation.ContentScreen
 import com.example.fluent.navigation.NavigationBar
 import com.example.fluent.navigation.Screen
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeChild
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +38,7 @@ fun Screen1(
     onItemClick: (Int) -> Unit,
     onButtonClick: () -> Unit
 ) {
-    val items = viewModel.items.collectAsState(initial = emptyList()).value
+    val wordList = viewModel.wordList.collectAsState(initial = emptyList()).value
     val navigationList = listOf(
         NavigationBar("Screen1", Icons.Default.Apps),
         NavigationBar("Screen4", Icons.Default.Home),
@@ -49,18 +55,18 @@ fun Screen1(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Words List") }
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(onClick = { onButtonClick() }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
             }
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = Color.Transparent,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    //.blur(radius = 2.dp)
+            ) {
                 navigationList.forEachIndexed { index, navigation ->
                     NavigationBarItem(
                         selected = selectedIndex == index,
@@ -87,8 +93,15 @@ fun Screen1(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            items(items) { item ->
-                Card(
+            items(wordList) { item ->
+                ElevatedCard(
+                    elevation = CardDefaults.elevatedCardElevation(
+                        defaultElevation = 4.dp,
+                        pressedElevation = 8.dp,
+                        hoveredElevation = 10.dp,
+                        focusedElevation = 6.dp
+                    ),
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)

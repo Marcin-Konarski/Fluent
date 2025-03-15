@@ -27,7 +27,7 @@ class Screen2ViewModel @Inject constructor(
 
     fun onEvent(event: WordEventForScreen2){
         when(event){
-            is WordEventForScreen2.deleteWord -> {
+            is WordEventForScreen2.DeleteWord -> {
                 viewModelScope.launch {
                     repository.deleteWord(event.word)
                 }

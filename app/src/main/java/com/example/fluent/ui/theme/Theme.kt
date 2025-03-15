@@ -7,14 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.foundation.isSystemInDarkTheme
 
 private val LightColors = lightColorScheme(
-    primary = androidx.compose.ui.graphics.Color(0xFF6200EE),
-    secondary = androidx.compose.ui.graphics.Color(0xFF03DAC6)
+    primary = androidx.compose.ui.graphics.Color(0x666200EE),
+    secondary = androidx.compose.ui.graphics.Color(0x6603DAC6)
     // You can customize other colors as needed
 )
 
 private val DarkColors = darkColorScheme(
-    primary = androidx.compose.ui.graphics.Color(0xFFBB86FC),
-    secondary = androidx.compose.ui.graphics.Color(0xFF03DAC6)
+    primary = androidx.compose.ui.graphics.Color(0x66BB86FC),
+    secondary = androidx.compose.ui.graphics.Color(0x6603DAC6)
     // You can customize other colors as needed
 )
 

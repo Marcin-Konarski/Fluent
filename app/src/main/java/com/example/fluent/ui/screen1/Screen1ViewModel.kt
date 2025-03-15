@@ -18,5 +18,5 @@ import javax.inject.Inject
 class Screen1ViewModel @Inject constructor(
     private val repository: WordDao
 ) : ViewModel() {
-    val items = repository.getSampleData()
+    val wordList = repository.getSampleData()
 }

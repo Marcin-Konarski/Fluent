@@ -16,6 +16,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -46,11 +48,10 @@ fun Screen2(
         Screen.Screen5.route -> 2
         else -> 0
     }
-
     Text(text = "Item ID: $itemId")
     Scaffold(
         topBar = {
-            SmallTopAppBar(
+            TopAppBar(
                 title = { Text("Go Back") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
@@ -65,7 +66,7 @@ fun Screen2(
                         onClick = {
                             onBackClick()
                             item?.let {
-                                viewModel.onEvent(WordEventForScreen2.deleteWord(it))
+                                viewModel.onEvent(WordEventForScreen2.DeleteWord(it))
                             }
                         }
                     ) {
@@ -78,7 +79,10 @@ fun Screen2(
             )
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = Color.Transparent,
+                //modifier = Modifier.blur(radius = 16.dp)
+            ) {
                 navigationList.forEachIndexed { index, navigation ->
                     NavigationBarItem(
                         selected = selectedIndex == index,
@@ -106,12 +110,17 @@ fun Screen2(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Text(
-                text = item?.word ?: "",
-                style = MaterialTheme.typography.headlineMedium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Card {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = item?.word ?: "",
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.headlineLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = item?.translation ?: "",
                     modifier = Modifier.padding(16.dp),

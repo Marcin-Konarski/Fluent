@@ -25,7 +25,7 @@ class Screen3ViewModel @Inject constructor(
 
     fun onEvent(event: WordEventForScreen3) {
         when (event) {
-            WordEventForScreen3.saveWord -> {
+            WordEventForScreen3.SaveWord -> {
                 val word = _state.value.word.trim()
                 val translation = _state.value.translation.trim()
 
@@ -44,7 +44,7 @@ class Screen3ViewModel @Inject constructor(
                 }
             }
 
-            is WordEventForScreen3.setWord -> {
+            is WordEventForScreen3.SetWord -> {
                 _state.update {
                     it.copy(
                         word = event.word
@@ -52,7 +52,7 @@ class Screen3ViewModel @Inject constructor(
                 }
             }
 
-            is WordEventForScreen3.setTranslation -> {
+            is WordEventForScreen3.SetTranslation -> {
                 _state.update {
                     it.copy(
                         translation = event.translation
