@@ -1,7 +1,6 @@
 package com.example.fluent.ui.screen3
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.fluent.WordEventForScreen3
 import com.example.fluent.WordState
@@ -19,7 +18,6 @@ class Screen3ViewModel @Inject constructor(
     private val repository: WordDao,
 ) : ViewModel() {
 
-    val items = repository.getSampleData() // Live Flow from database
     private val _state = MutableStateFlow(WordState())
     val state = _state.asStateFlow() // Expose immutable state to UI
 
@@ -43,7 +41,6 @@ class Screen3ViewModel @Inject constructor(
                     }
                 }
             }
-
             is WordEventForScreen3.SetWord -> {
                 _state.update {
                     it.copy(
@@ -51,7 +48,6 @@ class Screen3ViewModel @Inject constructor(
                     )
                 }
             }
-
             is WordEventForScreen3.SetTranslation -> {
                 _state.update {
                     it.copy(

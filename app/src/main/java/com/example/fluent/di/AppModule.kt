@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.room.Room
 import com.example.fluent.data.WordDao
 import com.example.fluent.data.WordDatabase
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

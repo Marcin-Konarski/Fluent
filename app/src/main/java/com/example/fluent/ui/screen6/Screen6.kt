@@ -1,38 +1,38 @@
-package com.example.fluent.ui.screen1
+package com.example.fluent.ui.screen6
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.fluent.navigation.NavigationBar
 import com.example.fluent.navigation.Screen
+import com.example.fluent.ui.screen6.Screen6ViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Screen1(
+fun Screen6(
     navController: NavHostController,
-    viewModel: Screen1ViewModel = hiltViewModel(),
-    onItemClick: (Int) -> Unit,
-    onButtonClick: () -> Unit
+    viewModel: Screen6ViewModel = hiltViewModel()
 ) {
-    val wordList = viewModel.wordList.collectAsState(initial = emptyList()).value
     val navigationList = listOf(
-        NavigationBar("Screen1", Icons.Default.Apps),
-        NavigationBar("Screen4", Icons.Default.Home),
-        NavigationBar("Screen6", Icons.Default.Settings),
+        com.example.fluent.navigation.NavigationBar("Screen1", Icons.Default.Apps),
+        com.example.fluent.navigation.NavigationBar("Screen4", Icons.Default.Home),
+        com.example.fluent.navigation.NavigationBar("Screen6", Icons.Default.Settings)
     )
 
     // Get the current route to dynamically update selected index
@@ -46,17 +46,10 @@ fun Screen1(
     }
 
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = { onButtonClick() }) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-            }
-        },
         bottomBar = {
             NavigationBar(
                 containerColor = Color.Transparent,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    //.blur(radius = 2.dp)
+                //modifier = Modifier.blur(radius = 16.dp)
             ) {
                 navigationList.forEachIndexed { index, navigation ->
                     NavigationBarItem(
@@ -78,33 +71,14 @@ fun Screen1(
                 }
             }
         }
-    ) { paddingValues ->
-        LazyColumn(
+    ){ paddingValues ->
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-        ) {
-            items(wordList) { item ->
-                ElevatedCard(
-                    elevation = CardDefaults.elevatedCardElevation(
-                        defaultElevation = 4.dp,
-                        pressedElevation = 8.dp,
-                        hoveredElevation = 10.dp,
-                        focusedElevation = 6.dp
-                    ),
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .clickable { onItemClick(item.id) }
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = item.word, style = MaterialTheme.typography.headlineSmall)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = item.translation)
-                    }
-                }
-            }
+                .padding(16.dp)
+        ){
+            Text(text = "SCREEN 6")
         }
     }
 }

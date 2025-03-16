@@ -4,25 +4,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForScreen2
-import com.example.fluent.data.Word
 import com.example.fluent.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +30,7 @@ fun Screen2(
     val navigationList = listOf(
         com.example.fluent.navigation.NavigationBar("Screen1", Icons.Default.Apps),
         com.example.fluent.navigation.NavigationBar("Screen4", Icons.Default.Home),
-        com.example.fluent.navigation.NavigationBar("Screen5", Icons.Default.Settings)
+        com.example.fluent.navigation.NavigationBar("Screen6", Icons.Default.Settings)
     )
 
     // Get the current route to dynamically update selected index
@@ -45,7 +38,8 @@ fun Screen2(
     val selectedIndex = when (currentDestination) {
         Screen.Screen1.route -> 0
         Screen.Screen4.route -> 1
-        Screen.Screen5.route -> 2
+        Screen.Screen5.route -> 1
+        Screen.Screen6.route -> 2
         else -> 0
     }
     Text(text = "Item ID: $itemId")
@@ -90,7 +84,7 @@ fun Screen2(
                             when (index) {
                                 0 -> navController.navigate(Screen.Screen1.route)
                                 1 -> navController.navigate(Screen.Screen4.route)
-                                2 -> navController.navigate(Screen.Screen5.route)
+                                2 -> navController.navigate(Screen.Screen6.route)
                             }
                         },
                         icon = {

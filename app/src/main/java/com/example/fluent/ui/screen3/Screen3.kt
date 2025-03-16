@@ -43,10 +43,11 @@ fun Screen3(
     onButtonClick: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
+
     val navigationList = listOf(
         com.example.fluent.navigation.NavigationBar("Screen1", Icons.Default.Apps),
         com.example.fluent.navigation.NavigationBar("Screen4", Icons.Default.Home),
-        com.example.fluent.navigation.NavigationBar("Screen5", Icons.Default.Settings)
+        com.example.fluent.navigation.NavigationBar("Screen6", Icons.Default.Settings)
     )
 
     // Get the current route to dynamically update selected index
@@ -54,13 +55,13 @@ fun Screen3(
     val selectedIndex = when (currentDestination) {
         Screen.Screen1.route -> 0
         Screen.Screen4.route -> 1
-        Screen.Screen5.route -> 2
+        Screen.Screen5.route -> 1
+        Screen.Screen6.route -> 2
         else -> 0
     }
     // Requesters to control focus (jumping from one text field to the second text filed)
     val wordFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-
     val gradientColors = listOf(SkyBlue, AquaBlue, ElectricBlue, DeepBlue, SapphireBlue, NavyBlue)
 
     Scaffold(
@@ -92,7 +93,7 @@ fun Screen3(
                             when (index) {
                                 0 -> navController.navigate(Screen.Screen1.route)
                                 1 -> navController.navigate(Screen.Screen4.route)
-                                2 -> navController.navigate(Screen.Screen5.route)
+                                2 -> navController.navigate(Screen.Screen6.route)
                             }
                         },
                         icon = {
@@ -112,7 +113,6 @@ fun Screen3(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-
             OutlinedTextField(
                 value = state.word,
                 onValueChange = { viewModel.onEvent(WordEventForScreen3.SetWord(it)) },
