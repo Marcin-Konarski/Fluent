@@ -1,4 +1,4 @@
-package com.example.fluent.ui.screen1
+package com.example.fluent.ui.listWordsScreen
 
 import androidx.lifecycle.ViewModel
 import com.example.fluent.data.WordDao
@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class Screen1ViewModel @Inject constructor(
+class ListWordsViewModel @Inject constructor(
     private val repository: WordDao
 ) : ViewModel() {
     val wordList = repository.getSampleData()

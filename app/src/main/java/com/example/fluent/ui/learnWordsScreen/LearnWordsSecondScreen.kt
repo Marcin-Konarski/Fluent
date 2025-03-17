@@ -1,4 +1,4 @@
-package com.example.fluent.ui.screen5
+package com.example.fluent.ui.learnWordsScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.navigation.Screen
-import com.example.fluent.ui.screen4.SharedViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction

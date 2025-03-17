@@ -1,34 +1,32 @@
-package com.example.fluent.ui.screen6
+package com.example.fluent.ui.detailsScreen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.fluent.WordEventForScreen2
 import com.example.fluent.navigation.Screen
-import com.example.fluent.ui.screen6.Screen6ViewModel
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Screen6(
+fun Screen2(
     navController: NavHostController,
-    viewModel: Screen6ViewModel = hiltViewModel()
+    itemId: Int,
+    viewModel: DetailsViewModel = hiltViewModel(),
+    onBackClick: () -> Unit
 ) {
+    val item = viewModel.item.collectAsState().value
     val navigationList = listOf(
         com.example.fluent.navigation.NavigationBar("Screen1", Icons.Default.Apps),
         com.example.fluent.navigation.NavigationBar("Screen4", Icons.Default.Home),
@@ -44,8 +42,36 @@ fun Screen6(
         Screen.Screen6.route -> 2
         else -> 0
     }
-
+    Text(text = "Item ID: $itemId")
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Go Back") },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            onBackClick()
+                            item?.let {
+                                viewModel.onEvent(WordEventForScreen2.DeleteWord(it))
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete"
+                        )
+                    }
+                }
+            )
+        },
         bottomBar = {
             NavigationBar(
                 containerColor = Color.Transparent,
@@ -71,14 +97,30 @@ fun Screen6(
                 }
             }
         }
-    ){ paddingValues ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
-        ){
-            Text(text = "SCREEN 6")
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = item?.word ?: "",
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.headlineLarge
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = item?.translation ?: "",
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
     }
 }

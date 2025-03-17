@@ -1,4 +1,4 @@
-package com.example.fluent.ui.screen2
+package com.example.fluent.ui.detailsScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.SavedStateHandle
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class Screen2ViewModel @Inject constructor(
+class DetailsViewModel @Inject constructor(
     private val repository: WordDao,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {

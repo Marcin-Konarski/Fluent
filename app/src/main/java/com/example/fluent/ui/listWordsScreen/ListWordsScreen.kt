@@ -1,4 +1,4 @@
-package com.example.fluent.ui.screen1
+package com.example.fluent.ui.listWordsScreen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,7 +24,7 @@ import com.example.fluent.navigation.Screen
 @Composable
 fun Screen1(
     navController: NavHostController,
-    viewModel: Screen1ViewModel = hiltViewModel(),
+    viewModel: ListWordsViewModel = hiltViewModel(),
     onItemClick: (Int) -> Unit,
     onButtonClick: () -> Unit
 ) {

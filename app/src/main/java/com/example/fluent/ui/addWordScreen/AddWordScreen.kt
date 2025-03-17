@@ -1,4 +1,4 @@
-package com.example.fluent.ui.screen3
+package com.example.fluent.ui.addWordScreen
 
 
 import androidx.compose.foundation.layout.*
@@ -39,7 +39,7 @@ import com.example.fluent.ui.theme.SkyBlue
 @Composable
 fun Screen3(
     navController: NavHostController,
-    viewModel: Screen3ViewModel = hiltViewModel(),
+    viewModel: AddWordViewModel = hiltViewModel(),
     onButtonClick: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()

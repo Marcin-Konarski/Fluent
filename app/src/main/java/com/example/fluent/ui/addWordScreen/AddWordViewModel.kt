@@ -1,4 +1,4 @@
-package com.example.fluent.ui.screen3
+package com.example.fluent.ui.addWordScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class Screen3ViewModel @Inject constructor(
+class AddWordViewModel @Inject constructor(
     private val repository: WordDao,
 ) : ViewModel() {
 

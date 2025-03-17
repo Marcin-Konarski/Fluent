@@ -3,11 +3,7 @@ package com.example.fluent.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,13 +11,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.fluent.ui.screen1.Screen1
-import com.example.fluent.ui.screen2.Screen2
-import com.example.fluent.ui.screen3.Screen3
-import com.example.fluent.ui.screen4.Screen4
-import com.example.fluent.ui.screen4.SharedViewModel
-import com.example.fluent.ui.screen5.Screen5
-import com.example.fluent.ui.screen6.Screen6
+import com.example.fluent.ui.listWordsScreen.Screen1
+import com.example.fluent.ui.detailsScreen.Screen2
+import com.example.fluent.ui.addWordScreen.Screen3
+import com.example.fluent.ui.learnWordsScreen.Screen4
+import com.example.fluent.ui.learnWordsScreen.SharedViewModel
+import com.example.fluent.ui.learnWordsScreen.Screen5
+import com.example.fluent.ui.flashCardsScreen.Screen6
 import androidx.compose.runtime.getValue
 
 

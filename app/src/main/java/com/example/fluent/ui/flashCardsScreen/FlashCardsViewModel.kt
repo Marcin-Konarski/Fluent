@@ -1,4 +1,4 @@
-package com.example.fluent.ui.screen6
+package com.example.fluent.ui.flashCardsScreen
 
 import androidx.lifecycle.ViewModel
 import com.example.fluent.data.WordDao
@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class Screen6ViewModel @Inject constructor(
+class FlashCardsViewModel @Inject constructor(
         private val wordDao: WordDao
 ) : ViewModel() {
 
