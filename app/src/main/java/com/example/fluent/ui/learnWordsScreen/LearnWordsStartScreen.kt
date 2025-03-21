@@ -35,6 +35,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForScreen4and5
 import com.example.fluent.navigation.Screen
+import com.example.fluent.ui.components.AppNavigationBar
+import com.example.fluent.ui.components.AppTextField
+import com.example.fluent.ui.components.AppTopBar
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,50 +53,15 @@ fun Screen4(
     val correctWord by viewModel.correctWord.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val navigationList = listOf(
-        com.example.fluent.navigation.NavigationBar("Screen1", Icons.Default.Apps),
-        com.example.fluent.navigation.NavigationBar("Screen4", Icons.Default.Home),
-        com.example.fluent.navigation.NavigationBar("Screen6", Icons.Default.Settings)
-    )
-
-    // Get the current route to dynamically update selected index
-    val currentDestination = navController.currentBackStackEntry?.destination?.route
-    val selectedIndex = when (currentDestination) {
-        Screen.Screen1.route -> 0
-        Screen.Screen4.route -> 1
-        Screen.Screen5.route -> 1
-        Screen.Screen6.route -> 2
-        else -> 0
-    }
-
     Scaffold(
+        topBar = {
+            AppTopBar(
+                title = "Learn Words",
+                showBackButton = true,
+            )
+        },
         bottomBar = {
-            NavigationBar(
-                containerColor = Color.Transparent,
-                //modifier = Modifier.blur(radius = 16.dp)
-            ) {
-                navigationList.forEachIndexed { index, navigation ->
-                    NavigationBarItem(
-                        selected = selectedIndex == index,
-                        onClick = {
-                            when (index) {
-                                0 -> navController.navigate(Screen.Screen1.route)
-                                1 -> navController.navigate(Screen.Screen4.route)
-                                2 -> navController.navigate(Screen.Screen6.route)
-                            }
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = navigation.icon,
-                                contentDescription = "Icon"
-                            )
-                        },
-                        label = {
-                            Text(text = navigation.label)
-                        }
-                    )
-                }
-            }
+            AppNavigationBar(navController = navController)
         }
     ){ paddingValues ->
         Column(
@@ -105,16 +73,16 @@ fun Screen4(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (correctWord != null) {
-                Text(text = "Correct Word: $correctWord", color = Color.Red)
+                Text(text = "$correctWord", color = Color.Yellow)
             } else {
                 Text(text = "")
             }
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             //Text(text = currentWord?.word ?: "No words available")
             Text(text = currentWord?.translation ?: "No words available")
 
-            OutlinedTextField(
+            AppTextField(
                 value = userInput,
                 onValueChange = {
                     viewModel.onEvent(WordEventForScreen4and5.SetWordInput(it))
@@ -129,14 +97,10 @@ fun Screen4(
                         navController.popBackStack()
                     }
                 ),
-//                textStyle = TextStyle(
-//                    Color(color = DeepBlue)
-//                ),
                 label = {
                     Text(text = "Word")
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
 
             Button(

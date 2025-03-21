@@ -1,6 +1,7 @@
 package com.example.fluent.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 
@@ -12,7 +13,7 @@ data class NavigationBar (
 
 @Composable
 fun ContentScreen(
-    modifier: androidx.compose.ui.Modifier,
+    modifier: Modifier,
     navController: NavHostController,
     selectedIndex: Int
 ){

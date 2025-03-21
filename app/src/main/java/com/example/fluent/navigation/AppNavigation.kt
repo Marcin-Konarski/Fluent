@@ -18,7 +18,6 @@ import com.example.fluent.ui.learnWordsScreen.Screen4
 import com.example.fluent.ui.learnWordsScreen.SharedViewModel
 import com.example.fluent.ui.learnWordsScreen.Screen5
 import com.example.fluent.ui.flashCardsScreen.Screen6
-import androidx.compose.runtime.getValue
 
 
 sealed class Screen(val route: String) {
@@ -35,6 +34,7 @@ sealed class Screen(val route: String) {
 @Composable
 fun AppNavigation(navController: NavHostController) {
     val navController = rememberNavController()
+    val sharedViewModel: SharedViewModel = hiltViewModel()
     NavHost(
         navController = navController,
         startDestination = Screen.Screen1.route
@@ -79,6 +79,7 @@ fun AppNavigation(navController: NavHostController) {
             route = "screen4_graph"
         ) {
 
+
             // Finds the parent navigation graph's back stack entry.
             // Instead of scoping the ViewModel to Screen4 or Screen5
             // it is scoped to screen4_graph, making it persist across
@@ -89,15 +90,15 @@ fun AppNavigation(navController: NavHostController) {
                 val parentEntry = remember(entry) {
                     navController.getBackStackEntry("screen4_graph")
                 }
-                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
-                val state by viewModel.sharedState.collectAsStateWithLifecycle()
+//                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
+                val state = sharedViewModel.sharedState.collectAsStateWithLifecycle().value
 
                 Screen4(
                     navController = navController,
                     state = state,
-                    viewModel = viewModel,
+                    viewModel = sharedViewModel,
                     onNavigateToScreen5 = {
-                        viewModel.updateState()
+                        sharedViewModel.updateState()
                         navController.navigate(Screen.Screen5.route)
                     }
                 )
@@ -107,15 +108,15 @@ fun AppNavigation(navController: NavHostController) {
                 val parentEntry = remember(entry) {
                     navController.getBackStackEntry("screen4_graph")
                 }
-                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
-                val state by viewModel.sharedState.collectAsStateWithLifecycle()
+//                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
+                val state = sharedViewModel.sharedState.collectAsStateWithLifecycle().value
 
                 Screen5(
                     navController = navController,
                     state = state,
-                    viewModel = viewModel,
+                    viewModel = sharedViewModel,
                     onNavigateToScreen4 = {
-                        viewModel.updateState()
+                        sharedViewModel.updateState()
                         navController.popBackStack()
                     }
                 )
