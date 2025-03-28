@@ -13,7 +13,7 @@ private val LightColors = lightColorScheme(
 )
 
 private val DarkColors = darkColorScheme(
-    primary = androidx.compose.ui.graphics.Color(0x66BB86FC),
+    primary = DeepMagenta,
     secondary = androidx.compose.ui.graphics.Color(0x6603DAC6)
     // You can customize other colors as needed
 )

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -14,6 +16,7 @@ import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -38,6 +41,8 @@ import com.example.fluent.navigation.Screen
 import com.example.fluent.ui.components.AppNavigationBar
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.ui.components.AppTopBar
+import com.example.fluent.ui.theme.DeepMagenta
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,15 +106,31 @@ fun Screen4(
                     Text(text = "Word")
                 },
                 modifier = Modifier.fillMaxWidth()
+                    .padding(20.dp)
             )
 
             Button(
                 onClick = {
                     viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
                     onNavigateToScreen5()
-                }
+                },
+                modifier = Modifier
+                    .padding(top = 20.dp) //odstęp
+                    .height(45.dp) //wysokosc przycisku
+                    .width(320.dp), //szerokosc przycisku
+
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = DeepMagenta, //tlo
+                    contentColor = Color.White //napis na buttonie
+                ),
+                shape = RoundedCornerShape(16.dp), //zaokraglone rogi
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 8.dp, //dodajemy cień
+                    pressedElevation = 12.dp,
+                    focusedElevation = 12.dp
+                )
             ) {
-                Text(text = "Back to Screen 5. State: $state")
+                Text(text = "Confirm")
             }
         }
     }
