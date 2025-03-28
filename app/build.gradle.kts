@@ -47,6 +47,7 @@ android {
     }
 }
 
+
 dependencies {
     // Core Android
     implementation("androidx.core:core-ktx:1.12.0")
@@ -95,6 +96,6 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
 
-    // Blur?
-    implementation("dev.chrisbanes.haze:haze:0.6.0")
+    // Glassmorphic Composables
+    implementation("com.github.jakhongirmadaminov:glassmorphic-composables:0.0.4")
 }

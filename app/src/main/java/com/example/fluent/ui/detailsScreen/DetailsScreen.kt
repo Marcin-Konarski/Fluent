@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -16,6 +18,8 @@ import com.example.fluent.ui.components.AppNavigationBar
 import com.example.fluent.ui.components.AppTopBar
 import com.example.fluent.ui.components.AppDeleteButton
 import com.example.fluent.ui.components.AppCard
+import com.example.fluent.ui.components.BlurredAppNavigationBar
+import com.example.fluent.ui.components.FullSizeBlur
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +50,7 @@ fun Screen2(
             )
         },
         bottomBar = {
-            AppNavigationBar(navController = navController)
+            BlurredAppNavigationBar(navController = navController)
         }
     ) { paddingValues ->
         Column(

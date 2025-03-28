@@ -15,6 +15,8 @@ import androidx.navigation.NavHostController
 import com.example.fluent.ui.components.AppNavigationBar
 import com.example.fluent.ui.components.AppTopBar
 import com.example.fluent.ui.components.AppCard
+import com.example.fluent.ui.components.BlurredAppCard
+import com.example.fluent.ui.components.BlurredAppNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +41,7 @@ fun Screen1(
             }
         },
         bottomBar = {
-            AppNavigationBar(navController = navController)
+            BlurredAppNavigationBar(navController = navController)
         }
     ) { paddingValues ->
         LazyColumn(

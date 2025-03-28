@@ -29,6 +29,8 @@ sealed class Screen(val route: String) {
     object Screen4: Screen("screen4")
     object Screen5: Screen("Screen5")
     object Screen6: Screen("Screen6")
+
+    object YourScreen: Screen("YourScreen")
 }
 
 @Composable
