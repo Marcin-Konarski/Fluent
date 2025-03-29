@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,24 +67,32 @@ fun Screen4(
         bottomBar = {
             AppNavigationBar(navController = navController)
         }
-    ){ paddingValues ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(16.dp)
+                .imePadding(), //dodajemy padding uwzględniający klawiaturę
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (correctWord != null) {
-                Text(text = "$correctWord", color = Color.Yellow)
+                Text(
+                    text = "$correctWord",
+                    color = Color.Yellow,
+                    modifier = Modifier.offset(y = (-20).dp) // Przesuwamy tekst o 20 dp w górę
+                )
             } else {
                 Text(text = "")
             }
             Spacer(modifier = Modifier.height(2.dp))
 
             //Text(text = currentWord?.word ?: "No words available")
-            Text(text = currentWord?.translation ?: "No words available")
+            Text(
+                text = currentWord?.translation ?: "No words available",
+                modifier = Modifier.offset(y = (-20).dp) // Przesuwamy tekst o 20 dp w górę
+            )
 
             AppTextField(
                 value = userInput,
@@ -105,6 +115,7 @@ fun Screen4(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
+                    .offset(y = (-20).dp) // Przesuwamy pole tekstowe o 20 dp w górę
             )
             //do animacji przycisku - zapisywanie stanow wcisniecia przycisku
             val interactionSource = remember { MutableInteractionSource() }
@@ -125,10 +136,11 @@ fun Screen4(
                     clicked = true
                 },
                 modifier = Modifier
-                    .padding(top = 20.dp) //odstęp
+                    .padding(top = 5.dp) //odstęp
                     .height(45.dp) //wysokosc przycisku
                     .width(320.dp) //szerokosc przycisku
-                    .scale(scale.value),
+                    .scale(scale.value)
+                    .offset(y = (-20).dp), // Przesuwamy przycisk o 20 dp w górę
                 interactionSource = interactionSource,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DeepMagenta, //tlo
