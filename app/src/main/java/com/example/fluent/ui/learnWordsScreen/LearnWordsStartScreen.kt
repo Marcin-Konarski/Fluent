@@ -43,6 +43,7 @@ import com.example.fluent.ui.components.AppNavigationBar
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.ui.components.AppTopBar
 import com.example.fluent.ui.theme.DeepMagenta
+import com.example.fluent.ui.components.ProgressBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,17 +53,21 @@ fun Screen4(
     viewModel: SharedViewModel = hiltViewModel(),
     onNavigateToScreen5: () -> Unit
 ) {
-    val currentWord by viewModel.currentWord.collectAsState() // Observe current word
+    val currentWord by viewModel.currentWord.collectAsState()
     val userInput by viewModel.userInput.collectAsState()
     val correctWord by viewModel.correctWord.collectAsState()
+    val progress by viewModel.progress.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold(
         topBar = {
-            AppTopBar(
-                title = "Learn Words",
-                showBackButton = true,
-            )
+            Column {
+                AppTopBar(
+                    title = "Learn Words",
+                    showBackButton = true,
+                )
+                ProgressBar(progress = progress)
+            }
         },
         bottomBar = {
             AppNavigationBar(navController = navController)
@@ -73,7 +78,7 @@ fun Screen4(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
-                .imePadding(), //dodajemy padding uwzględniający klawiaturę
+                .imePadding(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -81,17 +86,16 @@ fun Screen4(
                 Text(
                     text = "$correctWord",
                     color = Color.Yellow,
-                    modifier = Modifier.offset(y = (-20).dp) // Przesuwamy tekst o 20 dp w górę
+                    modifier = Modifier.offset(y = (-30).dp)
                 )
             } else {
                 Text(text = "")
             }
             Spacer(modifier = Modifier.height(2.dp))
 
-            //Text(text = currentWord?.word ?: "No words available")
             Text(
                 text = currentWord?.translation ?: "No words available",
-                modifier = Modifier.offset(y = (-20).dp) // Przesuwamy tekst o 20 dp w górę
+                modifier = Modifier.offset(y = (-30).dp)
             )
 
             AppTextField(
@@ -115,9 +119,9 @@ fun Screen4(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
-                    .offset(y = (-20).dp) // Przesuwamy pole tekstowe o 20 dp w górę
+                    .offset(y = (-30).dp)
             )
-            //do animacji przycisku - zapisywanie stanow wcisniecia przycisku
+
             val interactionSource = remember { MutableInteractionSource() }
             val isPressed by interactionSource.collectIsPressedAsState()
             val scale = animateFloatAsState(if (isPressed) 0.95f else 1f, label = "")
@@ -136,19 +140,19 @@ fun Screen4(
                     clicked = true
                 },
                 modifier = Modifier
-                    .padding(top = 5.dp) //odstęp
-                    .height(45.dp) //wysokosc przycisku
-                    .width(320.dp) //szerokosc przycisku
+                    .padding(top = 5.dp)
+                    .height(45.dp)
+                    .width(320.dp)
                     .scale(scale.value)
-                    .offset(y = (-20).dp), // Przesuwamy przycisk o 20 dp w górę
+                    .offset(y = (-30).dp),
                 interactionSource = interactionSource,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = DeepMagenta, //tlo
-                    contentColor = Color.White //napis na buttonie
+                    containerColor = DeepMagenta,
+                    contentColor = Color.White
                 ),
-                shape = RoundedCornerShape(16.dp), //zaokraglone rogi
+                shape = RoundedCornerShape(16.dp),
                 elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 8.dp, //dodajemy cień
+                    defaultElevation = 8.dp,
                     pressedElevation = 12.dp,
                     focusedElevation = 12.dp
                 )

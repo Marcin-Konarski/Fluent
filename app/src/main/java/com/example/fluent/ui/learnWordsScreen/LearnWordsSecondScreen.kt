@@ -43,6 +43,7 @@ import com.example.fluent.ui.components.AppNavigationBar
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.ui.components.AppTopBar
 import com.example.fluent.ui.theme.DeepMagenta
+import com.example.fluent.ui.components.ProgressBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,20 +53,24 @@ fun Screen5(
     viewModel: SharedViewModel = hiltViewModel(),
     onNavigateToScreen4: () -> Unit
 ) {
-    val currentWord by viewModel.currentWord.collectAsState() // Observe current word
-    val userInput by viewModel.userInput.collectAsState()
-    val correctWord by viewModel.correctWord.collectAsState()
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val currentWord by viewModel.currentWord.collectAsState() // Pobieramy aktualne słowo
+    val userInput by viewModel.userInput.collectAsState() // Pobieramy dane z pola tekstowego
+    val correctWord by viewModel.correctWord.collectAsState() // Pobieramy poprawne słowo
+    val progress by viewModel.progress.collectAsState() // Pobieramy postęp z ViewModel
+    val keyboardController = LocalSoftwareKeyboardController.current // Kontroler klawiatury
 
     Scaffold(
         topBar = {
-            AppTopBar(
-                title = "Learn Words",
-                showBackButton = true,
-            )
+            Column {
+                AppTopBar( // Górny pasek
+                    title = "Learn Words",
+                    showBackButton = true,
+                )
+                ProgressBar(progress = progress) // Dodajemy ProgressBar
+            }
         },
         bottomBar = {
-            AppNavigationBar(navController = navController)
+            AppNavigationBar(navController = navController) // Dolny pasek nawigacji
         }
     ) { paddingValues ->
         Column(
@@ -73,28 +78,27 @@ fun Screen5(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
-                .imePadding(), //dodajemy padding uwzględniający klawiaturę
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .imePadding(), // Dodajemy padding uwzględniający klawiaturę
+            verticalArrangement = Arrangement.Center, // Centrujemy elementy w pionie
+            horizontalAlignment = Alignment.CenterHorizontally // Centrujemy elementy w poziomie
         ) {
             if (correctWord != null) {
                 Text(
                     text = "$correctWord",
                     color = Color.Yellow,
-                    modifier = Modifier.offset(y = (-20).dp) // Przesuwamy tekst o 20 dp w górę
+                    modifier = Modifier.offset(y = (-30).dp) // Przesuwamy tekst o 20 dp w górę
                 )
             } else {
                 Text(text = "")
             }
-            Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(2.dp)) // Mały odstęp
 
-            //Text(text = currentWord?.word ?: "No words available")
             Text(
                 text = currentWord?.translation ?: "No words available",
-                modifier = Modifier.offset(y = (-20).dp) // Przesuwamy tekst o 20 dp w górę
+                modifier = Modifier.offset(y = (-30).dp) // Przesuwamy tekst o 20 dp w górę
             )
 
-            AppTextField(
+            AppTextField( // Pole tekstowe
                 value = userInput,
                 onValueChange = {
                     viewModel.onEvent(WordEventForScreen4and5.SetWordInput(it))
@@ -115,9 +119,9 @@ fun Screen5(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
-                    .offset(y = (-20).dp) // Przesuwamy pole tekstowe o 20 dp w górę
+                    .offset(y = (-30).dp) // Przesuwamy pole tekstowe o 20 dp w górę
             )
-            //do animacji przycisku - zapisywanie stanow wcisniecia przycisku
+            // Animacja przycisku - zapisywanie stanu wciśnięcia przycisku
             val interactionSource = remember { MutableInteractionSource() }
             val isPressed by interactionSource.collectIsPressedAsState()
             val scale = animateFloatAsState(if (isPressed) 0.95f else 1f, label = "")
@@ -130,25 +134,25 @@ fun Screen5(
                 }
             }
 
-            Button(
+            Button( // Przycisk
                 onClick = {
                     viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
                     clicked = true
                 },
                 modifier = Modifier
-                    .padding(top = 5.dp) //odstęp
-                    .width(320.dp) //szerokosc przycisku)
-                    .height(45.dp) //wysokosc przycisku
+                    .padding(top = 5.dp) // Odstęp
+                    .height(45.dp) // Wysokość przycisku
+                    .width(320.dp) // Szerokość przycisku
                     .scale(scale.value)
-                    .offset(y = (-20).dp), // Przesuwamy przycisk o 20 dp w górę
+                    .offset(y = (-30).dp), // Przesuwamy przycisk o 20 dp w górę
                 interactionSource = interactionSource,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = DeepMagenta, //tlo
-                    contentColor = Color.White //napis na buttonie
+                    containerColor = DeepMagenta, // Tło
+                    contentColor = Color.White // Napis na buttonie
                 ),
-                shape = RoundedCornerShape(16.dp), //zaokraglone rogi
+                shape = RoundedCornerShape(16.dp), // Zaokrąglone rogi
                 elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 8.dp, //dodajemy cień
+                    defaultElevation = 8.dp, // Dodajemy cień
                     pressedElevation = 12.dp,
                     focusedElevation = 12.dp
                 )

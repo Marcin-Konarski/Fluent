@@ -1,5 +1,6 @@
 package com.example.fluent.ui.learnWordsScreen
 
+import androidx.compose.ui.geometry.isEmpty
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,6 +32,12 @@ class SharedViewModel @Inject constructor(
     private val _correctWord = MutableStateFlow<String?>(null) // Stores correct word
     val correctWord = _correctWord.asStateFlow()
 
+    private val _progress = MutableStateFlow(0f) // Dodajemy zmienną do przechowywania postępu
+    val progress = _progress.asStateFlow() // Udostępniamy postęp
+
+    private var correctAnswers = 0 // Licznik poprawnych odpowiedzi
+    //private val allWordsConst = 5f // Stała liczba słówek
+
     // Persist only the index
     private var currentIndex: Int
         get() = savedStateHandle.get("currentIndex") ?: 0
@@ -38,6 +45,7 @@ class SharedViewModel @Inject constructor(
 
     init {
         println("SharedViewModel initialized")
+        _progress.value = 0f // Ustawiamy postęp na 0 na starcie
         if (wordsList.isEmpty()) { // Load words only if not already stored
             fetchAndShuffleWords()
         } else {
@@ -52,6 +60,7 @@ class SharedViewModel @Inject constructor(
                 wordsList = words.shuffled().toMutableList() // Shuffle the list once
                 currentIndex = 0
                 _currentWord.value = wordsList.firstOrNull() // Set first word
+                calculateProgress() // Obliczamy postęp po załadowaniu słówek
             }
         }
     }
@@ -63,7 +72,8 @@ class SharedViewModel @Inject constructor(
                     currentIndex++ // Persist index
                     _currentWord.value = wordsList[currentIndex]
                     _userInput.value = ""
-                    _correctWord.value = null
+                    _correctWord.value = null // Czyścimy correctWord
+                    calculateProgress() // Obliczamy postęp po przejściu do następnego słówka
                 }
             }
             is WordEventForScreen4and5.SetWord -> {
@@ -78,11 +88,23 @@ class SharedViewModel @Inject constructor(
             is WordEventForScreen4and5.CheckAnswer -> {
                 if (_userInput.value.equals(_currentWord.value?.word, ignoreCase = true)) {
                     _correctWord.value = null
+                    correctAnswers++ // Zwiększamy licznik poprawnych odpowiedzi
                     onEvent(WordEventForScreen4and5.NextWord) // Move to next word automatically
                 } else {
                     _correctWord.value = _currentWord.value?.word
                 }
+                calculateProgress() // Obliczamy postęp po sprawdzeniu odpowiedzi
             }
+        }
+    }
+
+    private fun calculateProgress() {
+        val learnedWords = correctAnswers.toFloat() // Liczba nauczonych słówek
+        val allWordsConst = wordsList.size.toFloat()
+        _progress.value = if (allWordsConst > 0) {
+            learnedWords / allWordsConst
+        } else {
+            0f
         }
     }
 
