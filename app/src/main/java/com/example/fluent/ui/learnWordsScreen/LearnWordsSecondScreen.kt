@@ -125,7 +125,7 @@ fun Screen5(
                 Text(
                     text = "$correctWord",
                     color = Color.Yellow,
-                    modifier = Modifier.offset(y = (-30).dp)
+                    modifier = Modifier.offset(y = (-60).dp)
                 )
             } else {
                 Text(text = "")
@@ -134,7 +134,7 @@ fun Screen5(
 
             Text(
                 text = currentWord?.translation ?: "No words available",
-                modifier = Modifier.offset(y = (-30).dp)
+                modifier = Modifier.offset(y = (-60).dp)
             )
 
             AppTextField(
@@ -158,7 +158,7 @@ fun Screen5(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
-                    .offset(y = (-30).dp)
+                    .offset(y = (-60).dp)
             )
 
             val interactionSource = remember { MutableInteractionSource() }
@@ -183,7 +183,7 @@ fun Screen5(
                     .height(45.dp)
                     .width(320.dp)
                     .scale(scale.value)
-                    .offset(y = (-30).dp),
+                    .offset(y = (-60).dp),
                 interactionSource = interactionSource,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DeepMagenta,
