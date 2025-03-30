@@ -1,10 +1,13 @@
 package com.example.fluent.ui.learnWordsScreen
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -58,6 +62,11 @@ fun Screen4(
     val correctWord by viewModel.correctWord.collectAsState()
     val progress by viewModel.progress.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val learnedWords by viewModel.learnedWords.collectAsState()
+    val leftWords by viewModel.leftWords.collectAsState()
+
+    val density = LocalDensity.current
+    val progressBarPadding = with(density) { 16.dp.toPx() }
 
     Scaffold(
         topBar = {
@@ -66,7 +75,42 @@ fun Screen4(
                     title = "Learn Words",
                     showBackButton = true,
                 )
-                ProgressBar(progress = progress)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 16.dp)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Text(
+                            text = "Your progress",
+                            modifier = Modifier
+                                .padding(bottom = 4.dp),
+                        )
+                        ProgressBar(progress = progress)
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                ) {
+                    Text(
+                        text = "Learned: $learnedWords",
+                        modifier = Modifier
+                            .offset(x = -10.dp)
+
+
+
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = "Left: $leftWords",
+                        modifier = Modifier.offset(x = -5.dp)
+                    )
+                }
             }
         },
         bottomBar = {
@@ -86,7 +130,7 @@ fun Screen4(
                 Text(
                     text = "$correctWord",
                     color = Color.Yellow,
-                    modifier = Modifier.offset(y = (-30).dp)
+                    modifier = Modifier.offset(y = (-60).dp)
                 )
             } else {
                 Text(text = "")
@@ -95,7 +139,7 @@ fun Screen4(
 
             Text(
                 text = currentWord?.translation ?: "No words available",
-                modifier = Modifier.offset(y = (-30).dp)
+                modifier = Modifier.offset(y = (-60).dp)
             )
 
             AppTextField(
@@ -119,7 +163,7 @@ fun Screen4(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
-                    .offset(y = (-30).dp)
+                    .offset(y = (-60).dp)
             )
 
             val interactionSource = remember { MutableInteractionSource() }
@@ -144,7 +188,7 @@ fun Screen4(
                     .height(45.dp)
                     .width(320.dp)
                     .scale(scale.value)
-                    .offset(y = (-30).dp),
+                    .offset(y = (-60).dp),
                 interactionSource = interactionSource,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DeepMagenta,

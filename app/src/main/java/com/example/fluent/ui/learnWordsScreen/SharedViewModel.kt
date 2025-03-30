@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.isEmpty
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+
 import com.example.fluent.WordEventForScreen4and5
 import com.example.fluent.data.Word
 import com.example.fluent.data.WordDao
@@ -36,7 +37,12 @@ class SharedViewModel @Inject constructor(
     val progress = _progress.asStateFlow() // Udostępniamy postęp
 
     private var correctAnswers = 0 // Licznik poprawnych odpowiedzi
-    //private val allWordsConst = 5f // Stała liczba słówek
+
+    private val _learnedWords = MutableStateFlow(0)
+    val learnedWords = _learnedWords.asStateFlow()
+
+    private val _leftWords = MutableStateFlow(0)
+    val leftWords = _leftWords.asStateFlow()
 
     // Persist only the index
     private var currentIndex: Int
@@ -50,6 +56,7 @@ class SharedViewModel @Inject constructor(
             fetchAndShuffleWords()
         } else {
             _currentWord.value = wordsList.getOrNull(currentIndex)
+            updateLearnedAndLeftWords()
         }
     }
 
@@ -60,6 +67,7 @@ class SharedViewModel @Inject constructor(
                 wordsList = words.shuffled().toMutableList() // Shuffle the list once
                 currentIndex = 0
                 _currentWord.value = wordsList.firstOrNull() // Set first word
+                updateLearnedAndLeftWords()
                 calculateProgress() // Obliczamy postęp po załadowaniu słówek
             }
         }
@@ -89,6 +97,7 @@ class SharedViewModel @Inject constructor(
                 if (_userInput.value.equals(_currentWord.value?.word, ignoreCase = true)) {
                     _correctWord.value = null
                     correctAnswers++ // Zwiększamy licznik poprawnych odpowiedzi
+                    updateLearnedAndLeftWords()
                     onEvent(WordEventForScreen4and5.NextWord) // Move to next word automatically
                 } else {
                     _correctWord.value = _currentWord.value?.word
@@ -106,6 +115,11 @@ class SharedViewModel @Inject constructor(
         } else {
             0f
         }
+    }
+
+    private fun updateLearnedAndLeftWords() {
+        _learnedWords.value = correctAnswers
+        _leftWords.value = wordsList.size - correctAnswers
     }
 
     fun updateState() {

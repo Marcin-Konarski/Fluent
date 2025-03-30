@@ -4,7 +4,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -53,24 +56,60 @@ fun Screen5(
     viewModel: SharedViewModel = hiltViewModel(),
     onNavigateToScreen4: () -> Unit
 ) {
-    val currentWord by viewModel.currentWord.collectAsState() // Pobieramy aktualne słowo
-    val userInput by viewModel.userInput.collectAsState() // Pobieramy dane z pola tekstowego
-    val correctWord by viewModel.correctWord.collectAsState() // Pobieramy poprawne słowo
-    val progress by viewModel.progress.collectAsState() // Pobieramy postęp z ViewModel
-    val keyboardController = LocalSoftwareKeyboardController.current // Kontroler klawiatury
+    val currentWord by viewModel.currentWord.collectAsState()
+    val userInput by viewModel.userInput.collectAsState()
+    val correctWord by viewModel.correctWord.collectAsState()
+    val progress by viewModel.progress.collectAsState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val learnedWords by viewModel.learnedWords.collectAsState()
+    val leftWords by viewModel.leftWords.collectAsState()
+    val density = LocalDensity.current
+    val progressBarPadding = with(density) { 16.dp.toPx() }
 
     Scaffold(
         topBar = {
             Column {
-                AppTopBar( // Górny pasek
+                AppTopBar(
                     title = "Learn Words",
                     showBackButton = true,
                 )
-                ProgressBar(progress = progress) // Dodajemy ProgressBar
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 16.dp)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Text(
+                            text = "Your progress",
+                            modifier = Modifier
+                                .padding(bottom = 4.dp),
+                        )
+                        ProgressBar(progress = progress)
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                ) {
+                    Text(
+                        text = "Learned: $learnedWords",
+                        modifier = Modifier
+                            .offset(x = (-10).dp)
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = "Left: $leftWords",
+                        modifier = Modifier.offset(x = (-5).dp)
+                    )
+                }
             }
         },
         bottomBar = {
-            AppNavigationBar(navController = navController) // Dolny pasek nawigacji
+            AppNavigationBar(navController = navController)
         }
     ) { paddingValues ->
         Column(
@@ -78,27 +117,27 @@ fun Screen5(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
-                .imePadding(), // Dodajemy padding uwzględniający klawiaturę
-            verticalArrangement = Arrangement.Center, // Centrujemy elementy w pionie
-            horizontalAlignment = Alignment.CenterHorizontally // Centrujemy elementy w poziomie
+                .imePadding(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (correctWord != null) {
                 Text(
                     text = "$correctWord",
                     color = Color.Yellow,
-                    modifier = Modifier.offset(y = (-30).dp) // Przesuwamy tekst o 20 dp w górę
+                    modifier = Modifier.offset(y = (-30).dp)
                 )
             } else {
                 Text(text = "")
             }
-            Spacer(modifier = Modifier.height(2.dp)) // Mały odstęp
+            Spacer(modifier = Modifier.height(2.dp))
 
             Text(
                 text = currentWord?.translation ?: "No words available",
-                modifier = Modifier.offset(y = (-30).dp) // Przesuwamy tekst o 20 dp w górę
+                modifier = Modifier.offset(y = (-30).dp)
             )
 
-            AppTextField( // Pole tekstowe
+            AppTextField(
                 value = userInput,
                 onValueChange = {
                     viewModel.onEvent(WordEventForScreen4and5.SetWordInput(it))
@@ -119,9 +158,9 @@ fun Screen5(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
-                    .offset(y = (-30).dp) // Przesuwamy pole tekstowe o 20 dp w górę
+                    .offset(y = (-30).dp)
             )
-            // Animacja przycisku - zapisywanie stanu wciśnięcia przycisku
+
             val interactionSource = remember { MutableInteractionSource() }
             val isPressed by interactionSource.collectIsPressedAsState()
             val scale = animateFloatAsState(if (isPressed) 0.95f else 1f, label = "")
@@ -134,25 +173,25 @@ fun Screen5(
                 }
             }
 
-            Button( // Przycisk
+            Button(
                 onClick = {
                     viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
                     clicked = true
                 },
                 modifier = Modifier
-                    .padding(top = 5.dp) // Odstęp
-                    .height(45.dp) // Wysokość przycisku
-                    .width(320.dp) // Szerokość przycisku
+                    .padding(top = 5.dp)
+                    .height(45.dp)
+                    .width(320.dp)
                     .scale(scale.value)
-                    .offset(y = (-30).dp), // Przesuwamy przycisk o 20 dp w górę
+                    .offset(y = (-30).dp),
                 interactionSource = interactionSource,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = DeepMagenta, // Tło
-                    contentColor = Color.White // Napis na buttonie
+                    containerColor = DeepMagenta,
+                    contentColor = Color.White
                 ),
-                shape = RoundedCornerShape(16.dp), // Zaokrąglone rogi
+                shape = RoundedCornerShape(16.dp),
                 elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 8.dp, // Dodajemy cień
+                    defaultElevation = 8.dp,
                     pressedElevation = 12.dp,
                     focusedElevation = 12.dp
                 )
