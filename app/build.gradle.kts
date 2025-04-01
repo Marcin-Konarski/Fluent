@@ -98,4 +98,6 @@ dependencies {
 
     // Glassmorphic Composables
     implementation("com.github.jakhongirmadaminov:glassmorphic-composables:0.0.4")
+
+    implementation("dev.chrisbanes.haze:haze-jetpack-compose:0.4.1")
 }

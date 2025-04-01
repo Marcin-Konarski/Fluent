@@ -5,31 +5,32 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForScreen2
 import com.example.fluent.ui.components.AppButton
-import com.example.fluent.ui.components.AppNavigationBar
 import com.example.fluent.ui.components.AppTopBar
 import com.example.fluent.ui.components.AppDeleteButton
 import com.example.fluent.ui.components.AppCard
 import com.example.fluent.ui.components.BlurredAppNavigationBar
-import com.example.fluent.ui.components.FullSizeBlur
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Screen2(
+fun DetailsScreen(
     navController: NavHostController,
     itemId: Int,
     viewModel: DetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
     val item = viewModel.item.collectAsState().value
+    val hazeState = remember {
+        HazeState()
+    }
 
     Scaffold(
         topBar = {
@@ -50,7 +51,7 @@ fun Screen2(
             )
         },
         bottomBar = {
-            BlurredAppNavigationBar(navController = navController)
+            BlurredAppNavigationBar(navController = navController, hazeState = hazeState)
         }
     ) { paddingValues ->
         Column(

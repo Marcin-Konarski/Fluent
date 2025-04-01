@@ -42,15 +42,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForScreen4and5
-import com.example.fluent.ui.components.AppNavigationBar
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.ui.components.AppTopBar
+import com.example.fluent.ui.components.BlurredAppNavigationBar
 import com.example.fluent.ui.theme.DeepMagenta
 import com.example.fluent.ui.components.ProgressBar
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Screen5(
+fun LearnWordsScreen1(
     navController: NavHostController,
     state: Int,
     viewModel: SharedViewModel = hiltViewModel(),
@@ -65,6 +66,9 @@ fun Screen5(
     val leftWords by viewModel.leftWords.collectAsState()
     val density = LocalDensity.current
     val progressBarPadding = with(density) { 16.dp.toPx() }
+    val hazeState = remember {
+        HazeState()
+    }
 
     Scaffold(
         topBar = {
@@ -109,7 +113,7 @@ fun Screen5(
             }
         },
         bottomBar = {
-            AppNavigationBar(navController = navController)
+            BlurredAppNavigationBar(navController = navController, hazeState = hazeState)
         }
     ) { paddingValues ->
         Column(

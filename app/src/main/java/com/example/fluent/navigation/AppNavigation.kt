@@ -11,13 +11,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.fluent.ui.listWordsScreen.Screen1
-import com.example.fluent.ui.detailsScreen.Screen2
-import com.example.fluent.ui.addWordScreen.Screen3
-import com.example.fluent.ui.learnWordsScreen.Screen4
+import com.example.fluent.ui.listWordsScreen.ListWordsScreen
+import com.example.fluent.ui.detailsScreen.DetailsScreen
+import com.example.fluent.ui.addWordScreen.AddWordScreen
+import com.example.fluent.ui.learnWordsScreen.LearnWordsScreen2
 import com.example.fluent.ui.learnWordsScreen.SharedViewModel
-import com.example.fluent.ui.learnWordsScreen.Screen5
-import com.example.fluent.ui.flashCardsScreen.Screen6
+import com.example.fluent.ui.learnWordsScreen.LearnWordsScreen1
+import com.example.fluent.ui.flashCardsScreen.FlashCardsScreen
 
 
 sealed class Screen(val route: String) {
@@ -43,7 +43,7 @@ fun AppNavigation(navController: NavHostController) {
     ) {
 
         composable(Screen.Screen1.route) {
-            Screen1(
+            ListWordsScreen(
                 navController = navController,
                 onItemClick = { itemId ->
                     navController.navigate(Screen.Screen2.createRoute(itemId))
@@ -61,7 +61,7 @@ fun AppNavigation(navController: NavHostController) {
             val itemId = backStackEntry.arguments?.getInt("itemId") ?: -1
             if (itemId == -1) return@composable
 
-            Screen2(
+            DetailsScreen(
                 navController = navController,
                 itemId = itemId,
                 onBackClick = { navController.popBackStack() }
@@ -69,7 +69,7 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable(Screen.Screen3.route) {
-            Screen3(
+            AddWordScreen(
                 navController = navController,
                 onButtonClick = { navController.popBackStack() }
             )
@@ -95,7 +95,7 @@ fun AppNavigation(navController: NavHostController) {
 //                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
                 val state = sharedViewModel.sharedState.collectAsStateWithLifecycle().value
 
-                Screen4(
+                LearnWordsScreen2(
                     navController = navController,
                     state = state,
                     viewModel = sharedViewModel,
@@ -113,7 +113,7 @@ fun AppNavigation(navController: NavHostController) {
 //                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
                 val state = sharedViewModel.sharedState.collectAsStateWithLifecycle().value
 
-                Screen5(
+                LearnWordsScreen1(
                     navController = navController,
                     state = state,
                     viewModel = sharedViewModel,
@@ -126,7 +126,7 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable(Screen.Screen6.route) {
-            Screen6(navController = navController)
+            FlashCardsScreen(navController = navController)
         }
     }
 }

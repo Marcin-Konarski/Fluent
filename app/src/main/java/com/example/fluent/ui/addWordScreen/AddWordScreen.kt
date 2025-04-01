@@ -20,14 +20,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForScreen3
-import com.example.fluent.ui.components.AppNavigationBar
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.ui.components.AppTopBar
+import com.example.fluent.ui.components.BlurredAppNavigationBar
+import dev.chrisbanes.haze.HazeState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Screen3(
+fun AddWordScreen(
     navController: NavHostController,
     viewModel: AddWordViewModel = hiltViewModel(),
     onButtonClick: () -> Unit,
@@ -37,7 +38,9 @@ fun Screen3(
     // Requesters to control focus (jumping from one text field to the second text filed)
     val wordFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-
+    val hazeState = remember {
+        HazeState()
+    }
 
     Scaffold(
         topBar = {
@@ -61,7 +64,7 @@ fun Screen3(
             }
         },
         bottomBar = {
-            AppNavigationBar(navController = navController)
+            BlurredAppNavigationBar(navController = navController, hazeState = hazeState)
         }
     ) { paddingValues ->
         Column(
@@ -115,7 +118,6 @@ fun Screen3(
                 },
                 modifier = Modifier.fillMaxWidth()
             )
-
         }
     }
 }
