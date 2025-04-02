@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -24,6 +25,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import dev.jakhongirmadaminov.glassmorphiccomposables.GlassmorphicColumn
 import dev.jakhongirmadaminov.glassmorphiccomposables.Place
 import dev.jakhongirmadaminov.glassmorphiccomposables.fastblur
@@ -32,6 +34,7 @@ import dev.shreyaspatil.capturable.controller.CaptureController
 import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.compose.ui.graphics.graphicsLayer
 
 
 @Composable
@@ -114,57 +117,28 @@ fun FullSizeBlur(
 
 
 
-
-
 @Composable
 fun FullScreenBlurredBackground(
     modifier: Modifier = Modifier,
-    wallpaperResource: Int = R.drawable.evening_city,
-    blurRadius: Int = 100,
+    wallpaperResource: Int = R.drawable.black1,
+    blurRadius: Float = 50f,
     content: @Composable () -> Unit
 ) {
-    val captureController = rememberCaptureController()
-    val capturedBitmap = remember { mutableStateOf<Bitmap?>(null) }
-
     Box(modifier = modifier.fillMaxSize()) {
-        // Capture full screen including background
-        Capturable(
-            controller = captureController,
-            onCaptured = { bitmap, _ ->
-                bitmap?.let {
-                    capturedBitmap.value = fastblur(it.asAndroidBitmap(), scale = 1f, blurRadius)
-                }
-            }
-        ) {
-            Image(
-                painter = painterResource(id = wallpaperResource),
-                contentDescription = "Wallpaper",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        }
+        Image(
+            painter = painterResource(id = wallpaperResource),
+            contentDescription = "Wallpaper",
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer { alpha = 0.9f }
+                .blur(10.dp),
+            contentScale = ContentScale.Crop
+        )
 
-        // Apply blurred background
-        capturedBitmap.value?.let { blurredImage ->
-            Image(
-                bitmap = blurredImage.asImageBitmap(),
-                contentDescription = "Blurred Background",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                alpha = 0.9f // Adjust transparency if needed
-            )
-        }
-
-        // Capture the screen after composition
-        LaunchedEffect(Unit) {
-            withContext(Dispatchers.Main) {
-                if (capturedBitmap.value == null) captureController.capture()
-            }
-        }
-
-        // Overlay the UI content
+        // Overlay UI content on top
         Box(modifier = Modifier.fillMaxSize()) {
             content()
         }
     }
 }
+

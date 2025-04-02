@@ -22,7 +22,7 @@ import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForScreen3
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.ui.components.AppTopBar
-import com.example.fluent.ui.components.BlurredAppNavigationBar
+import com.example.fluent.navigation.BlurredAppNavigationBar
 import dev.chrisbanes.haze.HazeState
 
 
@@ -34,9 +34,6 @@ fun AddWordScreen(
     onButtonClick: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-
-    // Requesters to control focus (jumping from one text field to the second text filed)
-    val wordFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val hazeState = remember {
         HazeState()

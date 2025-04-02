@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.fluent.R
-import com.example.fluent.ui.components.BlurredAppNavigationBar
+import com.example.fluent.navigation.BlurredAppNavigationBar
 import com.example.fluent.ui.components.FullScreenBlurredBackground
 import dev.chrisbanes.haze.HazeState
 
@@ -32,11 +32,12 @@ fun FlashCardsScreen(
         HazeState()
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Full-screen blurred background with content
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
         FullScreenBlurredBackground(
-            wallpaperResource = R.drawable.evening_city,
-            blurRadius = 0,
+            wallpaperResource = R.drawable.black1,
+            blurRadius = 30f,
         ) {
             Column(
                 modifier = Modifier
@@ -46,15 +47,15 @@ fun FlashCardsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Your Content Here",
+                    text = "Flash Cards",
                     style = MaterialTheme.typography.headlineMedium,
                     color = Color.White
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(onClick = { /* Your action */ }) {
-                    Text(text = "Click Me")
+                Button(onClick = { /* WE COOKING HERE */ }) {
+                    Text(text = "Next Card")
                 }
             }
         }
@@ -69,49 +70,4 @@ fun FlashCardsScreen(
     }
 }
 
-
-
-
-//@Composable
-//fun YourScreen() {
-//    val scrollState = rememberScrollState()
-//
-//    Box(
-//        modifier = Modifier.fillMaxSize() // Ensure it fills the whole screen
-//    ) {
-//        FullSizeBlur(
-//            scrollState = scrollState,
-//            wallpaperResource = R.drawable.evening_city,
-//            blurRadius = 80,
-//            color = Color.White.copy(alpha = 0.2f),
-//            scale = 0.8f,
-//            strokeWidth = 1.5f,
-//            content = {
-//                Box(
-//                    modifier = Modifier.fillMaxSize() // This ensures the blurred content expands
-//                ) {
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(16.dp),
-//                        verticalArrangement = Arrangement.Center,
-//                        horizontalAlignment = Alignment.CenterHorizontally
-//                    ) {
-//                        Text(
-//                            text = "Your Content Here",
-//                            style = MaterialTheme.typography.headlineMedium,
-//                            color = Color.White
-//                        )
-//
-//                        Spacer(modifier = Modifier.height(16.dp))
-//
-//                        Button(onClick = { /* Your action */ }) {
-//                            Text(text = "Click Me")
-//                        }
-//                    }
-//                }
-//            }
-//        )
-//    }
-//}
 
