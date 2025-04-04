@@ -14,10 +14,9 @@ import androidx.navigation.navArgument
 import com.example.fluent.ui.listWordsScreen.ListWordsScreen
 import com.example.fluent.ui.detailsScreen.DetailsScreen
 import com.example.fluent.ui.addWordScreen.AddWordScreen
-import com.example.fluent.ui.learnWordsScreen.LearnWordsScreen2
 import com.example.fluent.ui.learnWordsScreen.SharedViewModel
-import com.example.fluent.ui.learnWordsScreen.LearnWordsScreen1
 import com.example.fluent.ui.flashCardsScreen.FlashCardsScreen
+import com.example.fluent.ui.learnWordsScreen.LearnWordsScreen
 
 
 sealed class Screen(val route: String) {
@@ -95,34 +94,37 @@ fun AppNavigation(navController: NavHostController) {
 //                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
                 val state = sharedViewModel.sharedState.collectAsStateWithLifecycle().value
 
-                LearnWordsScreen2(
+//                LearnWordsScreen2(
+//                    navController = navController,
+//                    viewModel = sharedViewModel,
+//                    onNavigateToScreen5 = {
+//                        navController.navigate(Screen.Screen5.route)
+//                    }
+//                )
+                LearnWordsScreen(
                     navController = navController,
-                    state = state,
                     viewModel = sharedViewModel,
-                    onNavigateToScreen5 = {
-                        sharedViewModel.updateState()
-                        navController.navigate(Screen.Screen5.route)
-                    }
+//                    onNavigateToScreen5 = {
+//                        navController.navigate(Screen.Screen5.route)
+//                    }
                 )
             }
 
-            composable(Screen.Screen5.route) { entry ->
-                val parentEntry = remember(entry) {
-                    navController.getBackStackEntry("screen4_graph")
-                }
-//                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
-                val state = sharedViewModel.sharedState.collectAsStateWithLifecycle().value
-
-                LearnWordsScreen1(
-                    navController = navController,
-                    state = state,
-                    viewModel = sharedViewModel,
-                    onNavigateToScreen4 = {
-                        sharedViewModel.updateState()
-                        navController.popBackStack()
-                    }
-                )
-            }
+//            composable(Screen.Screen5.route) { entry ->
+//                val parentEntry = remember(entry) {
+//                    navController.getBackStackEntry("screen4_graph")
+//                }
+////                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
+//                val state = sharedViewModel.sharedState.collectAsStateWithLifecycle().value
+//
+//                LearnWordsScreen1(
+//                    navController = navController,
+//                    viewModel = sharedViewModel,
+//                    onNavigateToScreen4 = {
+//                        navController.popBackStack()
+//                    }
+//                )
+//            }
         }
 
         composable(Screen.Screen6.route) {

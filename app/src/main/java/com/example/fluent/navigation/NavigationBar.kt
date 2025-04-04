@@ -68,9 +68,9 @@ fun BlurredAppNavigationBar(
     val selectedTabIndex = when (currentRoute) {
         Screen.Screen1.route -> 0
         Screen.Screen4.route -> 1
-        Screen.Screen5.route -> 1
+//        Screen.Screen5.route -> 1
         Screen.Screen6.route -> 2
-        else -> 0  // Default to first tab
+        else -> 0
     }
 
     Box(

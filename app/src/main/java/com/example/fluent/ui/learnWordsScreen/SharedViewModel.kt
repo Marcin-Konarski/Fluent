@@ -121,8 +121,4 @@ class SharedViewModel @Inject constructor(
         _learnedWords.value = correctAnswers
         _leftWords.value = wordsList.size - correctAnswers
     }
-
-    fun updateState() {
-        _sharedState.value++
-    }
 }
