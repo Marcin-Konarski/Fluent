@@ -68,7 +68,6 @@ fun BlurredAppNavigationBar(
     val selectedTabIndex = when (currentRoute) {
         Screen.Screen1.route -> 0
         Screen.Screen4.route -> 1
-//        Screen.Screen5.route -> 1
         Screen.Screen6.route -> 2
         else -> 0
     }
@@ -167,6 +166,7 @@ fun BlurredAppNavigationBar(
                     0 -> navController.navigate(Screen.Screen1.route)
                     1 -> navController.navigate(Screen.Screen4.route)
                     2 -> navController.navigate(Screen.Screen6.route)
+
                 }
             }
         )

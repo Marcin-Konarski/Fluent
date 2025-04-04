@@ -35,6 +35,8 @@ import dev.shreyaspatil.capturable.controller.rememberCaptureController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 
 
 @Composable
@@ -121,7 +123,7 @@ fun FullSizeBlur(
 fun FullScreenBlurredBackground(
     modifier: Modifier = Modifier,
     wallpaperResource: Int = R.drawable.black1,
-    blurRadius: Float = 50f,
+    blurRadius: Dp = 30.dp,
     content: @Composable () -> Unit
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -131,7 +133,7 @@ fun FullScreenBlurredBackground(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer { alpha = 0.9f }
-                .blur(10.dp),
+                .blur(blurRadius),
             contentScale = ContentScale.Crop
         )
 

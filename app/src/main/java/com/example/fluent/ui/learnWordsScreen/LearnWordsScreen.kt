@@ -1,8 +1,6 @@
 package com.example.fluent.ui.learnWordsScreen
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,8 +57,8 @@ fun LearnWordsScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         FullScreenBlurredBackground(
-            wallpaperResource = R.drawable.black1,
-            blurRadius = 30f,
+//            wallpaperResource = R.drawable.black1,
+            blurRadius = 5.dp,
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -133,7 +131,6 @@ fun LearnWordsScreen(
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                // Don't hide keyboard, just check answer
                                 viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
                             }
                         ),
@@ -149,18 +146,17 @@ fun LearnWordsScreen(
                     ConfirmButton(
                         onClick = {
                             if (leftWords == 0) {
-                                // Only hide keyboard when completing all words
                                 keyboardController?.hide()
                                 viewModel.resetLearningProgress()
                                 navController.navigate(Screen.Screen4.route) {
                                     popUpTo(Screen.Screen4.route) { inclusive = true }
                                 }
                             } else {
-                                // Don't hide keyboard when checking answer or moving to next word
                                 viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
                             }
                         },
-                        buttonText = if (leftWords == 0) "Finish" else if (correctWord != null) "Next Word" else "Confirm"
+//                        buttonText = if (leftWords == 0) "Finish" else if (correctWord != null) "Next Word" else "Confirm"
+                        buttonText = if (correctWord != null) "Next Word" else "Confirm"
                     )
                 }
             }

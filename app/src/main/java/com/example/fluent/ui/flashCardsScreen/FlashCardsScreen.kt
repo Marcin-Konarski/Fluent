@@ -36,8 +36,8 @@ fun FlashCardsScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         FullScreenBlurredBackground(
-            wallpaperResource = R.drawable.black1,
-            blurRadius = 30f,
+//            wallpaperResource = R.drawable.black1,
+            blurRadius = 5.dp,
         ) {
             Column(
                 modifier = Modifier

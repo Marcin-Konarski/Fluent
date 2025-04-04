@@ -32,9 +32,8 @@ fun DetailsScreen(
     val hazeState = remember { HazeState() }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Full-screen blurred background
         FullScreenBlurredBackground(
-            blurRadius = 30f
+            blurRadius = 5.dp
         ) {
             Column(
                 modifier = Modifier

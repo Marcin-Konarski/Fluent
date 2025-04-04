@@ -34,7 +34,8 @@ fun ListWordsScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         FullScreenBlurredBackground(
-            blurRadius = 30f
+//            wallpaperResource = R.drawable.black1,
+            blurRadius = 5.dp
         ) {
             LazyColumn(
                 modifier = Modifier

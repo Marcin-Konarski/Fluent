@@ -1,14 +1,11 @@
 package com.example.fluent.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.fluent.ui.listWordsScreen.ListWordsScreen
@@ -21,15 +18,12 @@ import com.example.fluent.ui.learnWordsScreen.LearnWordsScreen
 
 sealed class Screen(val route: String) {
     object Screen1: Screen("screen1")
-    object Screen2: Screen("screen2/{itemId}") {
-        fun createRoute(itemId: Int) = "screen2/$itemId"
-    }
     object Screen3: Screen("screen3")
     object Screen4: Screen("screen4")
-    object Screen5: Screen("Screen5")
+    object Screen5: Screen("screen5/{itemId}") {
+        fun createRoute(itemId: Int) = "screen5/$itemId"
+    }
     object Screen6: Screen("Screen6")
-
-    object YourScreen: Screen("YourScreen")
 }
 
 @Composable
@@ -45,7 +39,7 @@ fun AppNavigation(navController: NavHostController) {
             ListWordsScreen(
                 navController = navController,
                 onItemClick = { itemId ->
-                    navController.navigate(Screen.Screen2.createRoute(itemId))
+                    navController.navigate(Screen.Screen5.createRoute(itemId))
                 },
                 onButtonClick = {
                     navController.navigate(Screen.Screen3.route)
@@ -54,7 +48,7 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable(
-            route = Screen.Screen2.route,
+            route = Screen.Screen5.route,
             arguments = listOf(navArgument("itemId") { type = NavType.IntType })
         ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getInt("itemId") ?: -1
@@ -74,57 +68,11 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
 
-        // Creates a graph of 2 screens in order to share one viewModel between 2 screens
-        navigation(
-            startDestination = Screen.Screen4.route,
-            route = "screen4_graph"
-        ) {
-
-
-            // Finds the parent navigation graph's back stack entry.
-            // Instead of scoping the ViewModel to Screen4 or Screen5
-            // it is scoped to screen4_graph, making it persist across
-            // both screens. Thus the same ViewModel instance is used
-            // on both screens. Creates the Screen4 and passes this viewModel
-            // instance as well as the state. The same for the second composable.
-            composable(Screen.Screen4.route) { entry ->
-                val parentEntry = remember(entry) {
-                    navController.getBackStackEntry("screen4_graph")
-                }
-//                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
-                val state = sharedViewModel.sharedState.collectAsStateWithLifecycle().value
-
-//                LearnWordsScreen2(
-//                    navController = navController,
-//                    viewModel = sharedViewModel,
-//                    onNavigateToScreen5 = {
-//                        navController.navigate(Screen.Screen5.route)
-//                    }
-//                )
-                LearnWordsScreen(
-                    navController = navController,
-                    viewModel = sharedViewModel,
-//                    onNavigateToScreen5 = {
-//                        navController.navigate(Screen.Screen5.route)
-//                    }
-                )
-            }
-
-//            composable(Screen.Screen5.route) { entry ->
-//                val parentEntry = remember(entry) {
-//                    navController.getBackStackEntry("screen4_graph")
-//                }
-////                val viewModel: SharedViewModel = hiltViewModel(parentEntry)
-//                val state = sharedViewModel.sharedState.collectAsStateWithLifecycle().value
-//
-//                LearnWordsScreen1(
-//                    navController = navController,
-//                    viewModel = sharedViewModel,
-//                    onNavigateToScreen4 = {
-//                        navController.popBackStack()
-//                    }
-//                )
-//            }
+        composable(Screen.Screen4.route) { entry ->
+            LearnWordsScreen(
+                navController = navController,
+                viewModel = sharedViewModel,
+            )
         }
 
         composable(Screen.Screen6.route) {

@@ -20,9 +20,6 @@ class SharedViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle // Persist state across screen changes
 ) : ViewModel() {
 
-    private val _sharedState = MutableStateFlow(0)
-    val sharedState = _sharedState.asStateFlow()
-
     private var wordsList = mutableListOf<Word>() // Store shuffled words internally
     private val _currentWord = MutableStateFlow<Word?>(null) // State for the UI
     val currentWord = _currentWord.asStateFlow() // Expose as read-only
