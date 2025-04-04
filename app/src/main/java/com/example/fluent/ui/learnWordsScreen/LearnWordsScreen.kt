@@ -154,8 +154,7 @@ fun LearnWordsScreen(
                                 viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
                             }
                         },
-//                        buttonText = if (leftWords == 0) "Finish" else if (correctWord != null) "Next Word" else "Confirm"
-                        buttonText = if (correctWord != null) "Next Word" else "Confirm"
+                        buttonText = if (leftWords == 0) "Finish" else if (correctWord != null) "Next Word" else "Confirm"
                     )
                 }
             }

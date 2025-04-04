@@ -3,8 +3,6 @@ package com.example.fluent.ui.addWordScreen
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,6 +18,7 @@ import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForScreen3
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.navigation.BlurredAppNavigationBar
+import com.example.fluent.ui.components.ConfirmButton
 import com.example.fluent.ui.components.FullScreenBlurredBackground
 
 
@@ -90,20 +89,16 @@ fun AddWordScreen(
                     modifier = Modifier.fillMaxWidth(0.9f)
                 )
 
-                Spacer(modifier = Modifier.height(24.dp)) // More space before button
+                Spacer(modifier = Modifier.height(72.dp)) // More space before button
 
-                FloatingActionButton(
+                ConfirmButton(
                     onClick = {
                         onButtonClick()
                         viewModel.onEvent(WordEventForScreen3.SaveWord)
                     },
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "Save"
-                    )
-                }
+                    buttonText = "Save"
+                )
+
             }
 
             Box(
