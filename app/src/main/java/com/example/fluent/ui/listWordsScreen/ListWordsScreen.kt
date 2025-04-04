@@ -28,9 +28,6 @@ fun ListWordsScreen(
     onButtonClick: () -> Unit
 ) {
     val wordList = viewModel.wordList.collectAsState(initial = emptyList()).value
-    val hazeState = remember {
-        HazeState()
-    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         FullScreenBlurredBackground(
@@ -69,7 +66,7 @@ fun ListWordsScreen(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
         ) {
-            BlurredAppNavigationBar(navController = navController, hazeState = hazeState)
+            BlurredAppNavigationBar(navController = navController)
         }
     }
 }

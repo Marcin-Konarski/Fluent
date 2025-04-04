@@ -51,7 +51,6 @@ fun LearnWordsScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val learnedWords by viewModel.learnedWords.collectAsState()
     val leftWords by viewModel.leftWords.collectAsState()
-    val hazeState = remember { HazeState() }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -167,7 +166,7 @@ fun LearnWordsScreen(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
         ) {
-            BlurredAppNavigationBar(navController = navController, hazeState = hazeState)
+            BlurredAppNavigationBar(navController = navController)
         }
     }
 }

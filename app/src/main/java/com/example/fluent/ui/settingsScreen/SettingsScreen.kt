@@ -1,4 +1,4 @@
-package com.example.fluent.ui.flashCardsScreen
+package com.example.fluent.ui.settingsScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,16 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.fluent.R
 import com.example.fluent.navigation.BlurredAppNavigationBar
 import com.example.fluent.ui.components.FullScreenBlurredBackground
 import dev.chrisbanes.haze.HazeState
 
 
 @Composable
-fun FlashCardsScreen(
+fun SettingsScreen(
     navController: NavHostController
 ) {
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -43,16 +43,10 @@ fun FlashCardsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Flash Cards",
+                    text = "Settings",
                     style = MaterialTheme.typography.headlineMedium,
                     color = Color.White
                 )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(onClick = { /* WE COOKING HERE */ }) {
-                    Text(text = "Next Card")
-                }
             }
         }
 

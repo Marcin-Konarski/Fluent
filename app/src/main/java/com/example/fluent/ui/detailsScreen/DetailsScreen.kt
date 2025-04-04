@@ -12,13 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.fluent.R
 import com.example.fluent.WordEventForScreen2
 import com.example.fluent.ui.components.AppButton
 import com.example.fluent.ui.components.AppCard
 import com.example.fluent.navigation.BlurredAppNavigationBar
 import com.example.fluent.ui.components.FullScreenBlurredBackground
-import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +27,6 @@ fun DetailsScreen(
     onBackClick: () -> Unit
 ) {
     val item = viewModel.item.collectAsState().value
-    val hazeState = remember { HazeState() }
 
     Box(modifier = Modifier.fillMaxSize()) {
         FullScreenBlurredBackground(
@@ -42,7 +39,6 @@ fun DetailsScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Display the currently selected word using WordCard
                 AppCard(
                     word = item?.word ?: "",
                     translation = item?.translation ?: "",
@@ -61,7 +57,6 @@ fun DetailsScreen(
             }
         }
 
-        // Back and delete buttons at the top-left corner
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -83,13 +78,12 @@ fun DetailsScreen(
             }
         }
 
-        // Bottom navigation bar
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
         ) {
-            BlurredAppNavigationBar(navController = navController, hazeState = hazeState)
+            BlurredAppNavigationBar(navController = navController)
         }
     }
 }

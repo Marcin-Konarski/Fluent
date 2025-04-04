@@ -19,7 +19,7 @@ class AddWordViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WordState())
-    val state = _state.asStateFlow() // Expose immutable state to UI
+    val state = _state.asStateFlow()
 
     fun onEvent(event: WordEventForScreen3) {
         when (event) {
