@@ -28,7 +28,7 @@ fun ConfirmButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed = interactionSource.collectIsPressedAsState().value
-    val scale = animateFloatAsState(if (isPressed) 0.95f else 1f, label = "")
+    val scale = animateFloatAsState(if (isPressed) 0.96f else 1f, label = "")
 
     Button(
         onClick = onClick,

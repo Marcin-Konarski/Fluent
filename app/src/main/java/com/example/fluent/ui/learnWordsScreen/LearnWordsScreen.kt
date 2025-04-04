@@ -1,9 +1,6 @@
 package com.example.fluent.ui.learnWordsScreen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -17,12 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -42,9 +34,9 @@ import com.example.fluent.R
 import com.example.fluent.WordEventForScreen4and5
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.navigation.BlurredAppNavigationBar
+import com.example.fluent.navigation.Screen
 import com.example.fluent.ui.components.ConfirmButton
 import com.example.fluent.ui.components.FullScreenBlurredBackground
-import com.example.fluent.ui.theme.DeepMagenta
 import com.example.fluent.ui.components.ProgressBar
 import dev.chrisbanes.haze.HazeState
 
@@ -62,10 +54,6 @@ fun LearnWordsScreen(
     val learnedWords by viewModel.learnedWords.collectAsState()
     val leftWords by viewModel.leftWords.collectAsState()
     val hazeState = remember { HazeState() }
-
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val scale = animateFloatAsState(if (isPressed) 0.95f else 1f, label = "")
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -119,13 +107,12 @@ fun LearnWordsScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // 🔥 **Fixed Correct Word Visibility Issue**: Use a fixed height placeholder
                     Text(
                         text = correctWord ?: " ",
                         color = Color.Yellow,
                         modifier = Modifier
                             .offset(y = (-60).dp)
-                            .height(24.dp) // 🔥 Ensures the space is ALWAYS there
+                            .height(24.dp)
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))
@@ -146,7 +133,7 @@ fun LearnWordsScreen(
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                keyboardController?.hide()
+                                // Don't hide keyboard, just check answer
                                 viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
                             }
                         ),
@@ -161,10 +148,19 @@ fun LearnWordsScreen(
 
                     ConfirmButton(
                         onClick = {
-                            viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
-                            keyboardController?.hide()
+                            if (leftWords == 0) {
+                                // Only hide keyboard when completing all words
+                                keyboardController?.hide()
+                                viewModel.resetLearningProgress()
+                                navController.navigate(Screen.Screen4.route) {
+                                    popUpTo(Screen.Screen4.route) { inclusive = true }
+                                }
+                            } else {
+                                // Don't hide keyboard when checking answer or moving to next word
+                                viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
+                            }
                         },
-                        buttonText = if (correctWord != null) "Next Word" else "Confirm"
+                        buttonText = if (leftWords == 0) "Finish" else if (correctWord != null) "Next Word" else "Confirm"
                     )
                 }
             }
