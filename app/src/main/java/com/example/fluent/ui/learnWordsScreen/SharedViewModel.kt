@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class SharedViewModel @Inject constructor(
     private val repository: WordDao,
@@ -59,20 +60,20 @@ class SharedViewModel @Inject constructor(
     // Adjust the fetchAndShuffleWords function to be more robust
     private fun fetchAndShuffleWords() {
         viewModelScope.launch {
-            val words = repository.getAllWords() // Fresh fetch from database
-
-            if (words.isNotEmpty()) {
-                wordsList = words.shuffled().toMutableList() // Get fresh shuffled list
-                currentIndex = 0
-                _currentWord.value = wordsList.firstOrNull() // Set first word
-                updateLearnedAndLeftWords()
-                calculateProgress()
-            } else {
-                // Handle empty database case
-                _currentWord.value = null
-                _leftWords.value = 0
-                _learnedWords.value = 0
-                _progress.value = 0f
+            repository.getAllWords().collect { words ->
+                if (words.isNotEmpty()) {
+                    wordsList = words.shuffled().toMutableList() // Get fresh shuffled list
+                    currentIndex = 0
+                    _currentWord.value = wordsList.firstOrNull() // Set first word
+                    updateLearnedAndLeftWords()
+                    calculateProgress()
+                } else {
+                    // Handle empty database case
+                    _currentWord.value = null
+                    _leftWords.value = 0
+                    _learnedWords.value = 0
+                    _progress.value = 0f
+                }
             }
         }
     }

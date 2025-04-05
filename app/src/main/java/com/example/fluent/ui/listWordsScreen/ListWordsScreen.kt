@@ -6,6 +6,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -14,7 +18,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.ui.components.FullScreenBlurredBackground
 import com.example.fluent.navigation.BlurredAppNavigationBar
-import com.example.fluent.ui.components.CategorySelection
+import com.example.fluent.ui.categorySelection.AddCategoryDialog
+import com.example.fluent.ui.categorySelection.CategoriesViewModel
+import com.example.fluent.ui.categorySelection.CategorySelection
+import com.example.fluent.ui.components.ConfirmButton
 import com.example.fluent.ui.components.GlossyAppCard
 
 
@@ -28,7 +35,12 @@ fun ListWordsScreen(
 ) {
     val wordList = viewModel.wordList.collectAsState(initial = emptyList()).value
     val categories = viewModel.categories.collectAsState(initial = emptyList()).value
-    val selectedCategory = viewModel.selectedCategory.collectAsState().value
+    val selectedCategoryId = viewModel.selectedCategoryId.collectAsState().value
+    val categoriesViewModel: CategoriesViewModel = hiltViewModel() // For managing categories
+    var showAddCategoryDialog by remember { mutableStateOf(false) } // Variable to show/hide 'Add category' dialog
+    val isCategoryEmpty = selectedCategoryId != null && // Conditions for showing the 'Delete Category' button
+            selectedCategoryId > 0 &&
+            wordList.none { it.categoryId == selectedCategoryId }
 
     Box(modifier = Modifier.fillMaxSize()) {
         FullScreenBlurredBackground(
@@ -39,17 +51,31 @@ fun ListWordsScreen(
                     .fillMaxSize()
                     .padding(top = 8.dp)
             ) {
-                // New Category selection component
+                // Display words category dialog
+                if (showAddCategoryDialog) {
+                    AddCategoryDialog(
+                        onDismiss = { showAddCategoryDialog = false },
+                        onConfirm = { newCategory ->
+                            categoriesViewModel.addCategory(newCategory)
+                            showAddCategoryDialog = false
+                        }
+                    )
+                }
+
+                // Display all categories in a row
                 CategorySelection(
-                    categories = categories,
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = { category ->
-                        viewModel.selectCategory(category)
+                    categories = categories.map { it.name },
+                    selectedCategory = categories.find { it.id == selectedCategoryId }?.name.orEmpty(),
+                    onCategorySelected = { selectedName ->
+                        val selected = categories.find { it.name == selectedName }
+                        viewModel.selectCategory(selected?.id)
                     },
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    onAddCategory = {
+                        showAddCategoryDialog = true
+                    }
                 )
 
-                // Word list (now in a separate Box with padding)
+                // Word list
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -78,7 +104,7 @@ fun ListWordsScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = if (selectedCategory.isEmpty())
+                                        text = if (categories.isEmpty())
                                             "No words added yet"
                                         else
                                             "No words in this category",
@@ -87,6 +113,24 @@ fun ListWordsScreen(
                                     )
                                 }
                             }
+                        }
+
+//                        // Show button to delete an empty category
+//                        if (isCategoryEmpty) {
+//                            item {
+//                                ConfirmButton(
+//                                    onClick = {
+//                                        categories.find { it.id == selectedCategoryId }?.let { category ->
+//                                            categoriesViewModel.deleteCategory(category)
+//                                        }
+//                                    },
+//                                    buttonText = "Delete Category"
+//                                )
+//                            }
+//                        }
+
+                        item {
+                            Spacer(modifier = Modifier.height(85.dp))
                         }
                     }
                 }

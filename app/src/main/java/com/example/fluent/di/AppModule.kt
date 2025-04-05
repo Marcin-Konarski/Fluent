@@ -2,6 +2,7 @@ package com.example.fluent.di
 
 import android.app.Application
 import androidx.room.Room
+import com.example.fluent.data.CategoryDao
 import com.example.fluent.data.WordDao
 import com.example.fluent.data.WordDatabase
 import dagger.Module
@@ -22,7 +23,12 @@ class AppModule {
     @Provides
     @Singleton
     fun provideWordDao(db: WordDatabase): WordDao {
-        return db.dao
+        return db.wordDao()
     }
 
+    @Provides
+    @Singleton
+    fun provideCategoryDao(db: WordDatabase): CategoryDao {
+        return db.categoryDao()
+    }
 }

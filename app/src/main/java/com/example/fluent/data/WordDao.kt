@@ -8,9 +8,17 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WordDao {
-
     @Upsert
     suspend fun insertWord(word: Word)
+
+    @Query("SELECT * FROM word ORDER BY word ASC")
+    fun getAllWords(): Flow<List<Word>>
+
+    @Query("SELECT * FROM word WHERE id = :id")
+    fun getWordById(id: Int): Flow<Word?>
+
+    @Delete
+    suspend fun deleteWord(word: Word)
 
     // Continuously emits new data when the database updates.
     // Does not need suspend since Flow is asynchronous.
@@ -21,22 +29,19 @@ interface WordDao {
     @Query("SELECT * FROM Word WHERE ID = :id")
     fun getDetailData(id: Int): Flow<Word?>
 
-    @Delete
-    suspend fun deleteWord(word: Word)
+    @Query("SELECT * FROM word WHERE categoryId = :categoryId ORDER BY word ASC")
+    fun getWordsByCategoryId(categoryId: Int): Flow<List<Word>>
 
-    // One-time fetch: Fetches the list once when called.
-    // Needs suspend since it runs in a coroutine.
-    // IT'S ENOUGH TO FETCH IT ONCE SINCE AFTER THE SCREEN
-    // CLAUSES THE VIEWMODEL IS DESTROYED THUS DATA CANNOT CHANGE DURING USAGE.
-    @Query("SELECT * FROM Word")
-    suspend fun getAllWords(): List<Word>
+    // Join to get word with its category name
+    @Query("SELECT w.*, c.name as categoryName FROM word w INNER JOIN category c ON w.categoryId = c.id WHERE w.id = :wordId")
+    fun getWordWithCategoryName(wordId: Int): Flow<WordWithCategoryName>
 
-    @Query("SELECT * FROM Word WHERE category = :category ORDER BY word ASC")
-    fun getWordsByCategory(category: String): Flow<List<Word>>
-
-    @Query("SELECT DISTINCT category FROM Word ORDER BY category ASC")
-    fun getAllCategories(): Flow<List<String>>
+    // Define class for the join result
+    data class WordWithCategoryName(
+        val id: Int,
+        val word: String,
+        val translation: String,
+        val categoryId: Int,
+        val categoryName: String
+    )
 }
-
-// suspend functions run in the coroutine
-// functions that don't retrieve date (instead just do something) can be suspend

@@ -3,30 +3,31 @@ package com.example.fluent.ui.addWordScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fluent.WordEventForAddWord
-import com.example.fluent.WordState
+import com.example.fluent.data.WordState
+import com.example.fluent.data.CategoryDao
 import com.example.fluent.data.Word
 import com.example.fluent.data.WordDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-
 @HiltViewModel
 class AddWordViewModel @Inject constructor(
-    private val repository: WordDao,
+    private val wordDao: WordDao,
+    private val categoryDao: CategoryDao
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WordState())
-    val state = _state.asStateFlow()
+    val state: StateFlow<WordState> = _state.asStateFlow()
 
     init {
-        // Load existing categories when ViewModel initializes
         viewModelScope.launch {
-            repository.getAllCategories().collect { categories ->
+            categoryDao.getAllCategories().collect { categories ->
                 _state.update { currentState ->
                     currentState.copy(allCategories = categories)
                 }
@@ -35,43 +36,52 @@ class AddWordViewModel @Inject constructor(
     }
 
     fun onEvent(event: WordEventForAddWord) {
-        when (event) {
-            WordEventForAddWord.SaveWordAddWord -> {
-                val word = _state.value.word.trim()
-                val translation = _state.value.translation.trim()
-                val category = _state.value.category.trim()
-
-                // Ensure all fields are filled before saving
-                if (word.isNotEmpty() && translation.isNotEmpty() && category.isNotEmpty()) {
-                    viewModelScope.launch {
-                        val wordEntity = Word(
-                            word = word,
-                            translation = translation,
-                            category = category
-                        )
-                        repository.insertWord(wordEntity)
-
-                        // Clear the input fields after saving
-                        _state.update { currentState ->
-                            currentState.copy(word = "", translation = "")
-                        }
-                    }
-                }
-            }
+        when(event) {
             is WordEventForAddWord.SetWordAddWord -> {
-                _state.update { currentState ->
-                    currentState.copy(word = event.word)
-                }
+                _state.update { it.copy(word = event.word) }
             }
             is WordEventForAddWord.SetTranslation -> {
-                _state.update { currentState ->
-                    currentState.copy(translation = event.translation)
-                }
+                _state.update { it.copy(translation = event.translation) }
             }
             is WordEventForAddWord.SetCategory -> {
-                _state.update { currentState ->
-                    currentState.copy(category = event.category)
+                val selectedCategory = _state.value.allCategories.find { it.name == event.category }
+                _state.update {
+                    it.copy(
+                        category = event.category,
+                        categoryId = selectedCategory?.id ?: 0
+                    )
                 }
+            }
+            is WordEventForAddWord.SaveWordAddWord -> {
+                saveWord()
+            }
+        }
+    }
+
+    private fun saveWord() {
+        val word = _state.value.word
+        val translation = _state.value.translation
+        val categoryId = _state.value.categoryId
+
+        if (word.isBlank() || translation.isBlank() || categoryId == 0) {
+            return
+        }
+
+        viewModelScope.launch {
+            val newWord = Word(
+                word = word,
+                translation = translation,
+                categoryId = categoryId
+            )
+
+            wordDao.insertWord(newWord)
+
+            // Reset state after saving
+            _state.update {
+                it.copy(
+                    word = "",
+                    translation = ""
+                )
             }
         }
     }
