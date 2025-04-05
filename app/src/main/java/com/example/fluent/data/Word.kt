@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class Word(
     val word: String,
     val translation: String,
+    val category: String,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0
 )

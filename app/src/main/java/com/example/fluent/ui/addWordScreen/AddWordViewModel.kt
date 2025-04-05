@@ -2,7 +2,7 @@ package com.example.fluent.ui.addWordScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fluent.WordEventForScreen3
+import com.example.fluent.WordEventForAddWord
 import com.example.fluent.WordState
 import com.example.fluent.data.Word
 import com.example.fluent.data.WordDao
@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+
 @HiltViewModel
 class AddWordViewModel @Inject constructor(
     private val repository: WordDao,
@@ -21,38 +23,54 @@ class AddWordViewModel @Inject constructor(
     private val _state = MutableStateFlow(WordState())
     val state = _state.asStateFlow()
 
-    fun onEvent(event: WordEventForScreen3) {
+    init {
+        // Load existing categories when ViewModel initializes
+        viewModelScope.launch {
+            repository.getAllCategories().collect { categories ->
+                _state.update { currentState ->
+                    currentState.copy(allCategories = categories)
+                }
+            }
+        }
+    }
+
+    fun onEvent(event: WordEventForAddWord) {
         when (event) {
-            WordEventForScreen3.SaveWord -> {
+            WordEventForAddWord.SaveWordAddWord -> {
                 val word = _state.value.word.trim()
                 val translation = _state.value.translation.trim()
+                val category = _state.value.category.trim()
 
-                // Ensure both fields are filled before saving
-                if (word.isNotEmpty() && translation.isNotEmpty()) {
+                // Ensure all fields are filled before saving
+                if (word.isNotEmpty() && translation.isNotEmpty() && category.isNotEmpty()) {
                     viewModelScope.launch {
-                        val word = Word(
+                        val wordEntity = Word(
                             word = word,
-                            translation = translation
+                            translation = translation,
+                            category = category
                         )
-                        repository.insertWord(word)
+                        repository.insertWord(wordEntity)
 
                         // Clear the input fields after saving
-                        _state.update { it.copy(word = "", translation = "") }
+                        _state.update { currentState ->
+                            currentState.copy(word = "", translation = "")
+                        }
                     }
                 }
             }
-            is WordEventForScreen3.SetWord -> {
-                _state.update {
-                    it.copy(
-                        word = event.word
-                    )
+            is WordEventForAddWord.SetWordAddWord -> {
+                _state.update { currentState ->
+                    currentState.copy(word = event.word)
                 }
             }
-            is WordEventForScreen3.SetTranslation -> {
-                _state.update {
-                    it.copy(
-                        translation = event.translation
-                    )
+            is WordEventForAddWord.SetTranslation -> {
+                _state.update { currentState ->
+                    currentState.copy(translation = event.translation)
+                }
+            }
+            is WordEventForAddWord.SetCategory -> {
+                _state.update { currentState ->
+                    currentState.copy(category = event.category)
                 }
             }
         }

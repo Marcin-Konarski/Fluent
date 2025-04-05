@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,15 +27,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.fluent.R
-import com.example.fluent.WordEventForScreen4and5
+import com.example.fluent.WordEventForLearnWordsScreen
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.navigation.BlurredAppNavigationBar
 import com.example.fluent.navigation.Screen
 import com.example.fluent.ui.components.ConfirmButton
 import com.example.fluent.ui.components.FullScreenBlurredBackground
 import com.example.fluent.ui.components.ProgressBar
-import dev.chrisbanes.haze.HazeState
 
 
 @Composable
@@ -122,7 +119,7 @@ fun LearnWordsScreen(
                     AppTextField(
                         value = userInput,
                         onValueChange = {
-                            viewModel.onEvent(WordEventForScreen4and5.SetWordInput(it))
+                            viewModel.onEvent(WordEventForLearnWordsScreen.SetWordInputLearnWords(it))
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
@@ -130,7 +127,7 @@ fun LearnWordsScreen(
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
+                                viewModel.onEvent(WordEventForLearnWordsScreen.CheckAnswer)
                             }
                         ),
                         label = {
@@ -151,7 +148,7 @@ fun LearnWordsScreen(
                                     popUpTo(Screen.Screen4.route) { inclusive = true }
                                 }
                             } else {
-                                viewModel.onEvent(WordEventForScreen4and5.CheckAnswer)
+                                viewModel.onEvent(WordEventForLearnWordsScreen.CheckAnswer)
                             }
                         },
                         buttonText = if (leftWords == 0) "Finish" else if (correctWord != null) "Next Word" else "Confirm"

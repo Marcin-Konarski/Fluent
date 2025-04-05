@@ -30,6 +30,12 @@ interface WordDao {
     // CLAUSES THE VIEWMODEL IS DESTROYED THUS DATA CANNOT CHANGE DURING USAGE.
     @Query("SELECT * FROM Word")
     suspend fun getAllWords(): List<Word>
+
+    @Query("SELECT * FROM Word WHERE category = :category ORDER BY word ASC")
+    fun getWordsByCategory(category: String): Flow<List<Word>>
+
+    @Query("SELECT DISTINCT category FROM Word ORDER BY category ASC")
+    fun getAllCategories(): Flow<List<String>>
 }
 
 // suspend functions run in the coroutine

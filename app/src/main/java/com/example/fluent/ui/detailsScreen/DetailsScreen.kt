@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.fluent.WordEventForScreen2
+import com.example.fluent.WordEventForDeleteWord
 import com.example.fluent.ui.components.AppButton
 import com.example.fluent.ui.components.AppCard
 import com.example.fluent.navigation.BlurredAppNavigationBar
@@ -70,7 +70,7 @@ fun DetailsScreen(
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(onClick = {
                 item?.let {
-                    viewModel.onEvent(WordEventForScreen2.DeleteWord(it))
+                    viewModel.onEvent(WordEventForDeleteWord.DeleteWord(it))
                     onBackClick()
                 }
             }) {

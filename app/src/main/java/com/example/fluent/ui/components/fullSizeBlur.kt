@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.Dp
 @Composable
 fun FullScreenBlurredBackground(
     modifier: Modifier = Modifier,
-    wallpaperResource: Int = R.drawable.black1,
+    wallpaperResource: Int = R.drawable.blackpattern,
     blurRadius: Dp = 30.dp,
     content: @Composable () -> Unit
 ) {

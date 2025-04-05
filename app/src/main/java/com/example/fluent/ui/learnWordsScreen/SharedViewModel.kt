@@ -1,11 +1,10 @@
 package com.example.fluent.ui.learnWordsScreen
 
-import androidx.compose.ui.geometry.isEmpty
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 
-import com.example.fluent.WordEventForScreen4and5
+import com.example.fluent.WordEventForLearnWordsScreen
 import com.example.fluent.data.Word
 import com.example.fluent.data.WordDao
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -78,9 +77,9 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: WordEventForScreen4and5) {
+    fun onEvent(event: WordEventForLearnWordsScreen) {
         when (event) {
-            is WordEventForScreen4and5.NextWord -> {
+            is WordEventForLearnWordsScreen.NextWordLearnWords -> {
                 if (currentIndex < wordsList.size - 1) {
                     currentIndex++ // Persist index
                     _currentWord.value = wordsList[currentIndex]
@@ -89,22 +88,22 @@ class SharedViewModel @Inject constructor(
                     calculateProgress()
                 }
             }
-            is WordEventForScreen4and5.SetWord -> {
+            is WordEventForLearnWordsScreen.SetWordLearnWords -> {
                 _currentWord.value = _currentWord.value?.copy(word = event.word)
             }
-            is WordEventForScreen4and5.SetTranslation -> {
+            is WordEventForLearnWordsScreen.SetTranslation -> {
                 _currentWord.value = _currentWord.value?.copy(translation = event.translation)
             }
-            is WordEventForScreen4and5.SetWordInput -> {
+            is WordEventForLearnWordsScreen.SetWordInputLearnWords -> {
                 _userInput.value = event.wordInput
             }
-            is WordEventForScreen4and5.CheckAnswer -> {
+            is WordEventForLearnWordsScreen.CheckAnswer -> {
                 if (_userInput.value.equals(_currentWord.value?.word, ignoreCase = true)) {
                     _correctWord.value = null
                     correctAnswers++
                     updateLearnedAndLeftWords()
                     // Go to next word but maintain keyboard focus
-                    onEvent(WordEventForScreen4and5.NextWord)
+                    onEvent(WordEventForLearnWordsScreen.NextWordLearnWords)
                 } else {
                     // Show correct word but don't clear input
                     _correctWord.value = _currentWord.value?.word

@@ -42,9 +42,7 @@ fun BlurredAppNavigationBar(
     navController: NavHostController,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-//    val currentRoute = navBackStackEntry?.destination?.route ?: Screen.Screen2.route
     val currentRoute = navBackStackEntry?.destination?.route
-
 
     val selectedTabIndex = when (currentRoute) {
         Screen.Screen1.route -> 0
@@ -131,7 +129,7 @@ fun BlurredAppNavigationBar(
             ) {
                 val tabWidth = size.width / tabs.size
                 drawCircle(
-                    color = animatedColor.copy(alpha = 0.6f),
+                    color = animatedColor.copy(alpha = 0.85f),
                     radius = size.height / 2,
                     center = Offset(
                         (tabWidth * animatedSelectedTabIndex) + tabWidth / 2,

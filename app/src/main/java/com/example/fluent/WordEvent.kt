@@ -3,20 +3,21 @@ package com.example.fluent
 import com.example.fluent.data.Word
 
 // this classes defines events - user actions
-sealed interface WordEventForScreen2 {
-    data class DeleteWord(val word: Word): WordEventForScreen2
+sealed interface WordEventForDeleteWord {
+    data class DeleteWord(val word: Word): WordEventForDeleteWord
 }
 
-sealed interface WordEventForScreen3 {
-    object SaveWord: WordEventForScreen3
-    data class SetWord(val word: String): WordEventForScreen3
-    data class SetTranslation(val translation: String): WordEventForScreen3
+sealed interface WordEventForAddWord {
+    object SaveWordAddWord: WordEventForAddWord
+    data class SetWordAddWord(val word: String): WordEventForAddWord
+    data class SetTranslation(val translation: String): WordEventForAddWord
+    data class SetCategory(val category: String): WordEventForAddWord
 }
 
-sealed interface WordEventForScreen4and5 {
-    data class SetWord(val word: String): WordEventForScreen4and5
-    data class SetTranslation(val translation: String): WordEventForScreen4and5
-    object NextWord: WordEventForScreen4and5
-    data class SetWordInput(val wordInput: String): WordEventForScreen4and5
-    object CheckAnswer: WordEventForScreen4and5
+sealed interface WordEventForLearnWordsScreen {
+    data class SetWordLearnWords(val word: String): WordEventForLearnWordsScreen
+    data class SetTranslation(val translation: String): WordEventForLearnWordsScreen
+    object NextWordLearnWords: WordEventForLearnWordsScreen
+    data class SetWordInputLearnWords(val wordInput: String): WordEventForLearnWordsScreen
+    object CheckAnswer: WordEventForLearnWordsScreen
 }

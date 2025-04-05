@@ -18,22 +18,22 @@ sealed class BarTabs(val title: String, val icon: ImageVector, val color: Color)
     object Words : BarTabs(
         title = "Words",
         icon = Icons.Rounded.FormatListNumbered,
-        color = Color(0xFF00BCD4)
+        color = Color(0xFF00E2FF)
     )
     object AddWord : BarTabs(
         title = "Add Word",
         icon = Icons.Rounded.AddCircleOutline,
-        color = Color(0xFFFF255E)
+        color = Color(0xFFFF006F)
     )
     object Learn : BarTabs(
         title = "Learn",
         icon = Icons.Rounded.BorderColor, // .Draw,
-        color = Color(0xFFEF613B)
+        color = Color(0xFFFF5E20)
     )
     object Settings : BarTabs(
         title = "Settings",
         icon = Icons.Rounded.Settings,
-        color = Color(0xFFEAD852)
+        color = Color(0xFFFFE521)
     )
 }
 
