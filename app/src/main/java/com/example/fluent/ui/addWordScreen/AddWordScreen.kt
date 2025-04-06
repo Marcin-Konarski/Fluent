@@ -14,7 +14,7 @@ import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForAddWord
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.navigation.BlurredAppNavigationBar
-import com.example.fluent.ui.categorySelection.AddCategoryDialog
+import com.example.fluent.ui.categorySelection.CategoryManagementDialog
 import com.example.fluent.ui.categorySelection.CategoriesViewModel
 import com.example.fluent.ui.components.ConfirmButton
 import com.example.fluent.ui.components.FullScreenBlurredBackground
@@ -25,12 +25,14 @@ import com.example.fluent.ui.categorySelection.CategorySelection
 fun AddWordScreen(
     navController: NavHostController,
     viewModel: AddWordViewModel = hiltViewModel(),
+    categoriesViewModel: CategoriesViewModel = hiltViewModel(),
     onButtonClick: () -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-    val categoriesViewModel: CategoriesViewModel = hiltViewModel() // For managing categories
-    var showAddCategoryDialog by remember { mutableStateOf(false) } // Variable to show/hide 'Add category' dialog
     val categoryNames = state.allCategories.map { it.name }
+    val uiState by categoriesViewModel.uiState.collectAsState()
+    var showCategoryManagementDialog by remember { mutableStateOf(false) } // Variable to show/hide 'Category management' dialog
+
 
     FullScreenBlurredBackground(
         blurRadius = 5.dp
@@ -45,12 +47,18 @@ fun AddWordScreen(
             ) {
 
                 // Display words category dialog
-                if (showAddCategoryDialog) {
-                    AddCategoryDialog(
-                        onDismiss = { showAddCategoryDialog = false },
-                        onConfirm = { newCategory ->
-                            categoriesViewModel.addCategory(newCategory)
-                            showAddCategoryDialog = false
+                if (showCategoryManagementDialog) {
+                    CategoryManagementDialog(
+                        categories = uiState.categories,
+                        onDismiss = { showCategoryManagementDialog = false },
+                        onAddCategory = { newCategoryName ->
+                            categoriesViewModel.addCategory(newCategoryName)
+                        },
+                        onRenameCategory = { category, newName ->
+                            categoriesViewModel.renameCategory(category, newName)
+                        },
+                        onDeleteCategory = { category ->
+                            categoriesViewModel.deleteCategory(category)
                         }
                     )
                 }
@@ -63,7 +71,7 @@ fun AddWordScreen(
                         viewModel.onEvent(WordEventForAddWord.SetCategory(category))
                     },
                     onAddCategory = {
-                        showAddCategoryDialog = true
+                        showCategoryManagementDialog = true
                     },
                     showAllOption = true
                 ) {}

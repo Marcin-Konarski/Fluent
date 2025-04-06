@@ -36,8 +36,21 @@ class CategoriesViewModel @Inject constructor(
         }
     }
 
-    fun deleteCategory(category: Category){
+    fun renameCategory(category: Category, newName: String) {
         viewModelScope.launch {
+            // Create updated category with the same ID but new name
+            val updatedCategory = category.copy(name = newName)
+            repository.updateCategory(updatedCategory)
+        }
+    }
+
+    fun deleteCategory(category: Category) {
+        viewModelScope.launch {
+            // If you want to reassign words when deleting a category
+            // Uncomment this and provide a default category ID
+            // repository.deleteCategoryAndReassignWords(category, defaultCategoryId = 1)
+
+            // Or just delete the category without reassigning
             repository.deleteCategory(category)
         }
     }

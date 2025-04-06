@@ -18,10 +18,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.ui.components.FullScreenBlurredBackground
 import com.example.fluent.navigation.BlurredAppNavigationBar
-import com.example.fluent.ui.categorySelection.AddCategoryDialog
 import com.example.fluent.ui.categorySelection.CategoriesViewModel
+import com.example.fluent.ui.categorySelection.CategoryManagementDialog
 import com.example.fluent.ui.categorySelection.CategorySelection
-import com.example.fluent.ui.components.ConfirmButton
 import com.example.fluent.ui.components.GlossyAppCard
 
 
@@ -30,17 +29,15 @@ import com.example.fluent.ui.components.GlossyAppCard
 fun ListWordsScreen(
     navController: NavHostController,
     viewModel: ListWordsViewModel = hiltViewModel(),
+    categoriesViewModel: CategoriesViewModel = hiltViewModel(),
     onItemClick: (Int) -> Unit,
     onButtonClick: () -> Unit
 ) {
     val wordList = viewModel.wordList.collectAsState(initial = emptyList()).value
     val categories = viewModel.categories.collectAsState(initial = emptyList()).value
     val selectedCategoryId = viewModel.selectedCategoryId.collectAsState().value
-    val categoriesViewModel: CategoriesViewModel = hiltViewModel() // For managing categories
-    var showAddCategoryDialog by remember { mutableStateOf(false) } // Variable to show/hide 'Add category' dialog
-    val isCategoryEmpty = selectedCategoryId != null && // Conditions for showing the 'Delete Category' button
-            selectedCategoryId > 0 &&
-            wordList.none { it.categoryId == selectedCategoryId }
+    val uiState by categoriesViewModel.uiState.collectAsState()
+    var showCategoryManagementDialog by remember { mutableStateOf(false) } // Variable to show/hide 'Category management' dialog
 
     Box(modifier = Modifier.fillMaxSize()) {
         FullScreenBlurredBackground(
@@ -51,13 +48,19 @@ fun ListWordsScreen(
                     .fillMaxSize()
                     .padding(top = 8.dp)
             ) {
-                // Display words category dialog
-                if (showAddCategoryDialog) {
-                    AddCategoryDialog(
-                        onDismiss = { showAddCategoryDialog = false },
-                        onConfirm = { newCategory ->
-                            categoriesViewModel.addCategory(newCategory)
-                            showAddCategoryDialog = false
+                // Display category management dialog
+                if (showCategoryManagementDialog) {
+                    CategoryManagementDialog(
+                        categories = uiState.categories,
+                        onDismiss = { showCategoryManagementDialog = false },
+                        onAddCategory = { newCategoryName ->
+                            categoriesViewModel.addCategory(newCategoryName)
+                        },
+                        onRenameCategory = { category, newName ->
+                            categoriesViewModel.renameCategory(category, newName)
+                        },
+                        onDeleteCategory = { category ->
+                            categoriesViewModel.deleteCategory(category)
                         }
                     )
                 }
@@ -71,7 +74,7 @@ fun ListWordsScreen(
                         viewModel.selectCategory(selected?.id)
                     },
                     onAddCategory = {
-                        showAddCategoryDialog = true
+                        showCategoryManagementDialog = true
                     }
                 )
 
@@ -114,20 +117,6 @@ fun ListWordsScreen(
                                 }
                             }
                         }
-
-//                        // Show button to delete an empty category
-//                        if (isCategoryEmpty) {
-//                            item {
-//                                ConfirmButton(
-//                                    onClick = {
-//                                        categories.find { it.id == selectedCategoryId }?.let { category ->
-//                                            categoriesViewModel.deleteCategory(category)
-//                                        }
-//                                    },
-//                                    buttonText = "Delete Category"
-//                                )
-//                            }
-//                        }
 
                         item {
                             Spacer(modifier = Modifier.height(85.dp))
