@@ -33,7 +33,6 @@ fun AddWordScreen(
     val uiState by categoriesViewModel.uiState.collectAsState()
     var showCategoryManagementDialog by remember { mutableStateOf(false) } // Variable to show/hide 'Category management' dialog
 
-
     FullScreenBlurredBackground(
         blurRadius = 5.dp
     ) {
