@@ -56,9 +56,7 @@ fun AddWordScreen(
                         onRenameCategory = { category, newName ->
                             categoriesViewModel.renameCategory(category, newName)
                         },
-                        onDeleteCategory = { category ->
-                            categoriesViewModel.deleteCategory(category)
-                        }
+                        categoriesViewModel = categoriesViewModel
                     )
                 }
 
@@ -124,7 +122,7 @@ fun AddWordScreen(
                             if (state.word.isNotBlank() && state.translation.isNotBlank() && state.category.isNotBlank()) {
                                 // Save the word in the selected category
                                 viewModel.onEvent(WordEventForAddWord.SaveWordAddWord)
-                                onButtonClick()
+//                                onButtonClick()
                             }
                         },
                         buttonText = "Save"

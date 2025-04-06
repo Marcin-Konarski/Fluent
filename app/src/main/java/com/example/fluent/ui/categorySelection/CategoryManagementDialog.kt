@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fluent.data.Category
 import com.example.fluent.ui.components.AppTextField
 
@@ -26,20 +27,17 @@ fun CategoryManagementDialog(
     onDismiss: () -> Unit,
     onAddCategory: (String) -> Unit,
     onRenameCategory: (Category, String) -> Unit,
-    onDeleteCategory: (Category) -> Unit
+    categoriesViewModel: CategoriesViewModel = hiltViewModel(),
 ) {
     val scrollState = rememberScrollState()
     var newCategoryName by remember { mutableStateOf("") }
     var showNewCategoryField by remember { mutableStateOf(false) }
+    val categoriesToDelete = remember { mutableStateListOf<Category>() }
+    var showDeleteWarningFor by remember { mutableStateOf<Category?>(null) }
+
     val editableCategories = remember(categories) {
-        categories.map { it to mutableStateOf(it.name) }
+        categories.map { it to mutableStateOf(it.name) }.toMutableStateList()
     }
-
-    // Track categories marked for deletion
-    var categoriesToDelete by remember { mutableStateOf(setOf<Category>()) }
-
-    // Track the list of visible categories after deletion
-    var visibleCategories by remember { mutableStateOf(categories) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -69,8 +67,7 @@ fun CategoryManagementDialog(
                     .padding(vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // List of existing categories with rename and delete functionality
-                if (visibleCategories.isEmpty() && !showNewCategoryField) {
+                if (categories.isEmpty() && !showNewCategoryField) {
                     Text(
                         text = "No categories yet",
                         style = MaterialTheme.typography.bodyMedium,
@@ -78,44 +75,34 @@ fun CategoryManagementDialog(
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                 } else {
-                    visibleCategories.forEach { category ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            val nameState = editableCategories.firstOrNull { it.first == category }?.second
-
-                            nameState?.let {
+                    editableCategories.forEach { (category, nameState) ->
+                        if (!categoriesToDelete.contains(category)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 AppTextField(
-                                    value = it.value,
-                                    onValueChange = { it },
+                                    value = nameState.value,
+                                    onValueChange = { nameState.value = it },
                                     label = { Text("Category name") },
                                     modifier = Modifier.weight(1f)
                                 )
-                            }
-
-                            // Bin icon to mark category for deletion
-                            IconButton(
-                                onClick = {
-                                    // Mark the category for deletion and remove it from visible list
-                                    categoriesToDelete = categoriesToDelete.toMutableSet().apply {
-                                        if (contains(category)) remove(category) else add(category)
-                                    }
-                                    visibleCategories = visibleCategories.filterNot { it == category }
-                                },
-                                modifier = Modifier.padding(start = 8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "Delete ${category.name}",
-                                    tint = Color.Red
-                                )
+                                IconButton(
+                                    onClick = { showDeleteWarningFor = category },
+                                    modifier = Modifier.padding(start = 8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Delete ${category.name}",
+                                        tint = Color.Red
+                                    )
+                                }
                             }
                         }
                     }
                 }
 
-                // New Category Input
+                // New Category Input Field
                 if (showNewCategoryField) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -129,8 +116,11 @@ fun CategoryManagementDialog(
                         )
 
                         IconButton(
-                            onClick = { showNewCategoryField = false },
-                            modifier = Modifier.padding(start = 8.dp)
+                            onClick = {
+                                newCategoryName = ""
+                                showNewCategoryField = false
+                            },
+                            modifier = Modifier.padding(start = 4.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
@@ -138,23 +128,6 @@ fun CategoryManagementDialog(
                                 tint = Color.Red
                             )
                         }
-
-//                        IconButton(
-//                            onClick = {
-//                                if (newCategoryName.isNotBlank()) {
-//                                    onAddCategory(newCategoryName.trim())
-//                                    newCategoryName = ""
-//                                    showNewCategoryField = false
-//                                }
-//                            },
-//                            enabled = newCategoryName.isNotBlank(),
-//                            modifier = Modifier.padding(start = 4.dp)
-//                        ) {
-//                            Icon(
-//                                imageVector = Icons.Default.Check,
-//                                contentDescription = "Add new category"
-//                            )
-//                        }
                     }
                 }
             }
@@ -162,26 +135,26 @@ fun CategoryManagementDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    // Apply changes to all categories when "Done" is pressed
+                    // Handle new category addition here
+                    if (showNewCategoryField && newCategoryName.isNotBlank()) {
+                        onAddCategory(newCategoryName.trim())
+                        newCategoryName = ""
+                        showNewCategoryField = false
+                    }
+
+                    // Handle renaming
                     editableCategories.forEach { (category, nameState) ->
-                        // Only rename if the category name is different and not blank
                         if (nameState.value.isNotBlank() && nameState.value != category.name) {
                             onRenameCategory(category, nameState.value.trim())
                         }
                     }
 
-                    // Add new category if newCategoryName is not blank
-                    if (newCategoryName.isNotBlank()) {
-                        onAddCategory(newCategoryName.trim())
-                        newCategoryName = "" // Reset after adding
-                    }
-
-                    // Delete categories marked for deletion
+                    // Handle deletions
                     categoriesToDelete.forEach { category ->
-                        onDeleteCategory(category)
+                        categoriesViewModel.deleteCategoryAndWords(category)
                     }
 
-                    onDismiss() // Dismiss dialog after applying changes
+                    onDismiss()
                 }
             ) {
                 Text("Done")
@@ -193,4 +166,27 @@ fun CategoryManagementDialog(
             }
         }
     )
+
+    if (showDeleteWarningFor != null) {
+        AlertDialog(
+            onDismissRequest = { showDeleteWarningFor = null },
+            title = { Text("Delete Category") },
+            text = {
+                Text("This will also delete all words inside '${showDeleteWarningFor!!.name}'. Are you sure?")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    categoriesToDelete.add(showDeleteWarningFor!!)
+                    showDeleteWarningFor = null
+                }) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteWarningFor = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fluent.data.Category
 import com.example.fluent.data.CategoryDao
+import com.example.fluent.data.WordDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
-    private val repository: CategoryDao
+    private val categoryDoa: CategoryDao,
+    private val wordDao: WordDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CategoryUiState())
@@ -22,7 +24,7 @@ class CategoriesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            repository.getAllCategories().collect { categories ->
+            categoryDoa.getAllCategories().collect { categories ->
                 _uiState.value = _uiState.value.copy(
                     categories = categories
                 )
@@ -32,7 +34,7 @@ class CategoriesViewModel @Inject constructor(
 
     fun addCategory(name: String) {
         viewModelScope.launch {
-            repository.insertCategory(Category(name = name))
+            categoryDoa.insertCategory(Category(name = name))
         }
     }
 
@@ -40,18 +42,21 @@ class CategoriesViewModel @Inject constructor(
         viewModelScope.launch {
             // Create updated category with the same ID but new name
             val updatedCategory = category.copy(name = newName)
-            repository.updateCategory(updatedCategory)
+            categoryDoa.updateCategory(updatedCategory)
         }
     }
 
     fun deleteCategory(category: Category) {
         viewModelScope.launch {
-            // If you want to reassign words when deleting a category
-            // Uncomment this and provide a default category ID
             // repository.deleteCategoryAndReassignWords(category, defaultCategoryId = 1)
+            categoryDoa.deleteCategory(category)
+        }
+    }
 
-            // Or just delete the category without reassigning
-            repository.deleteCategory(category)
+    fun deleteCategoryAndWords(category: Category) {
+        viewModelScope.launch {
+            wordDao.deleteWordsByCategoryId(category.id)
+            categoryDoa.deleteCategory(category)
         }
     }
 }

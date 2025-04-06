@@ -59,9 +59,7 @@ fun ListWordsScreen(
                         onRenameCategory = { category, newName ->
                             categoriesViewModel.renameCategory(category, newName)
                         },
-                        onDeleteCategory = { category ->
-                            categoriesViewModel.deleteCategory(category)
-                        }
+                        categoriesViewModel = categoriesViewModel
                     )
                 }
 
