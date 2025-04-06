@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 sealed class BarTabs(val title: String, val icon: ImageVector, val color: Color) {
     object FlashCards : BarTabs(
         title = "Cards",
-        icon = Icons.Rounded.AutoAwesomeMotion, // .DynamicFeed,
+        icon = Icons.Rounded.AutoAwesomeMotion, // Icons.Rounded.DynamicFeed,
         color = Color(0xFF00FF08)
     )
     object Words : BarTabs(
@@ -27,7 +27,7 @@ sealed class BarTabs(val title: String, val icon: ImageVector, val color: Color)
     )
     object Learn : BarTabs(
         title = "Learn",
-        icon = Icons.Rounded.BorderColor, // .Draw,
+        icon = Icons.Rounded.BorderColor, // Icons.Rounded.Draw,
         color = Color(0xFFFF5E20)
     )
     object Settings : BarTabs(

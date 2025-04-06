@@ -8,17 +8,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Draw
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -58,7 +59,7 @@ fun CategorySelection(
     modifier: Modifier = Modifier,
     showAllOption: Boolean = true,
     hazeState: HazeState? = null,
-    accentColor: Color = Color(0xFFFA6FFF),
+    accentColor: Color = Color(0xFFBAB7E7),
     content: @Composable (String) -> Unit = {}
 ) {
     Column(
@@ -66,10 +67,9 @@ fun CategorySelection(
             .fillMaxWidth()
             .padding(vertical = 16.dp),
     ) {
-        // Create a list that includes all option if requested, and an "Add" tab at the end
+        // Create a list that includes all option if requested
         val displayCategories = remember(categories, showAllOption) {
-            val baseList = if (showAllOption) listOf("All") + categories else categories
-            baseList + "+ Add"
+            if (showAllOption) listOf("All") + categories else categories
         }
 
         // Find the current selected index
@@ -98,8 +98,8 @@ fun CategorySelection(
                     width = Dp.Hairline,
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            Color.White.copy(alpha = 0.8f),
-                            Color.White.copy(alpha = 0.2f),
+                            Color.White.copy(alpha = 0.15f),
+                            Color.White.copy(alpha = 0.1f),
                         ),
                     ),
                     shape = RoundedCornerShape(24.dp)
@@ -107,16 +107,16 @@ fun CategorySelection(
         ) {
             // If no haze state is provided, use the blur effect
             if (hazeState == null) {
-                // Blurred background effect
+                // Blurred background effect - matched with BlurredAppNavigationBar
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(24.dp))
-                        .background(Color.White.copy(alpha = 0.05f))
-                        .blur(radius = 10.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+                        .background(Color.White.copy(alpha = 0.01f))
+                        .blur(radius = 2.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
                 )
 
-                // Gradient overlay
+                // Gradient overlay - matched with BlurredAppNavigationBar
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -124,8 +124,8 @@ fun CategorySelection(
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.White.copy(alpha = 0.15f),
-                                    Color.White.copy(alpha = 0.05f)
+                                    Color.White.copy(alpha = 0.01f),
+                                    Color.White.copy(alpha = 0.02f)
                                 )
                             )
                         )
@@ -140,7 +140,7 @@ fun CategorySelection(
                 contentColor = Color.White.copy(alpha = 0.9f),
                 divider = {},
                 indicator = { tabPositions ->
-                    if (tabPositions.isNotEmpty() && currentPage < tabPositions.size - 1) {
+                    if (tabPositions.isNotEmpty() && currentPage < displayCategories.size) {
                         val currentTabPosition = tabPositions[currentPage]
 
                         // Glowing circle indicator
@@ -153,7 +153,7 @@ fun CategorySelection(
                                     .blur(50.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
                             ) {
                                 drawCircle(
-                                    color = accentColor.copy(alpha = 0.6f),
+                                    color = accentColor.copy(alpha = 0.85f),
                                     radius = size.height / 2,
                                     center = Offset(size.width / 2, size.height / 2)
                                 )
@@ -181,6 +181,7 @@ fun CategorySelection(
                     }
                 }
             ) {
+                // Regular category tabs
                 displayCategories.forEachIndexed { index, category ->
                     val isSelected = index == currentPage
                     val alpha by animateFloatAsState(
@@ -199,10 +200,6 @@ fun CategorySelection(
                     Tab(
                         selected = isSelected,
                         onClick = {
-                            if (category == "+ Add") {
-                                onAddCategory()
-                                return@Tab
-                            }
                             currentPage = index
                             val selectedValue = if (category == "All" && showAllOption) "" else category
                             onCategorySelected(selectedValue)
@@ -221,6 +218,49 @@ fun CategorySelection(
                         )
                     }
                 }
+
+                // Edit tab with icon
+                val isEditSelected = currentPage == displayCategories.size
+                val editAlpha by animateFloatAsState(
+                    targetValue = if (isEditSelected) 1f else 0.6f,
+                    label = "editAlpha"
+                )
+                val editScale by animateFloatAsState(
+                    targetValue = if (isEditSelected) 1.05f else 1f,
+                    label = "editScale",
+                    animationSpec = spring(
+                        stiffness = Spring.StiffnessLow,
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                    )
+                )
+
+                Tab(
+                    selected = isEditSelected,
+                    onClick = { onAddCategory() },
+                    interactionSource = remember { NoRippleInteractionSource() }
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .scale(editScale)
+                            .padding(horizontal = 12.dp, vertical = 12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Draw,
+                            contentDescription = "Edit",
+                            tint = Color.White.copy(alpha = editAlpha),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "EDIT",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = editAlpha),
+                            modifier = Modifier
+                                .padding(start = 4.dp)
+                        )
+                    }
+                }
             }
         }
 
@@ -230,7 +270,7 @@ fun CategorySelection(
                 .padding(top = 16.dp)
         ) {
             val currentSelectedCategory = if (currentPage == 0 && showAllOption) ""
-            else displayCategories.getOrNull(currentPage).takeIf { it != "+ Add" } ?: ""
+            else displayCategories.getOrNull(currentPage) ?: ""
             content(currentSelectedCategory)
         }
     }
