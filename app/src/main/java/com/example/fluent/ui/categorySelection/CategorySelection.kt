@@ -48,6 +48,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 
+
 @Composable
 fun CategorySelection(
     categories: List<String>,
@@ -57,7 +58,7 @@ fun CategorySelection(
     modifier: Modifier = Modifier,
     showAllOption: Boolean = true,
     hazeState: HazeState? = null,
-    accentColor: Color = Color(0xFFFA6FFF), // Default to the pink color from the second sample
+    accentColor: Color = Color(0xFFFA6FFF),
     content: @Composable (String) -> Unit = {}
 ) {
     Column(
@@ -131,75 +132,54 @@ fun CategorySelection(
                 )
             }
 
-            // Selected tab indicator
-            if (currentPage < displayCategories.size - 1) {
-                val tabWidth = 1f / displayCategories.size
-                val animatedSelectedTabIndex by animateFloatAsState(
-                    targetValue = currentPage.toFloat(),
-                    label = "animatedSelectedTabIndex",
-                    animationSpec = spring(
-                        stiffness = Spring.StiffnessLow,
-                        dampingRatio = Spring.DampingRatioLowBouncy,
-                    )
-                )
-
-                // Glowing circle indicator
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(24.dp))
-                        .blur(50.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
-                ) {
-                    val width = size.width
-                    val tabOffset = width * tabWidth
-                    drawCircle(
-                        color = accentColor.copy(alpha = 0.6f),
-                        radius = size.height / 2,
-                        center = Offset(
-                            (tabOffset * animatedSelectedTabIndex) + tabOffset / 2,
-                            size.height / 2
-                        )
-                    )
-                }
-
-                // Animated border effect (like in the bottom navigation)
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(24.dp))
-                ) {
-                    // Instead of using paths, draw directly with rounded rectangle
-                    val tabWidth = size.width / displayCategories.size
-                    val startX = tabWidth * animatedSelectedTabIndex
-                    val endX = startX + tabWidth
-
-                    // Draw a simple bottom border under the selected tab
-                    drawLine(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                accentColor.copy(alpha = 0f),
-                                accentColor.copy(alpha = 0.8f),
-                                accentColor.copy(alpha = 0.8f),
-                                accentColor.copy(alpha = 0f)
-                            ),
-                            startX = startX,
-                            endX = endX
-                        ),
-                        start = Offset(startX, size.height - 2f),
-                        end = Offset(endX, size.height - 2f),
-                        strokeWidth = 2f
-                    )
-                }
-            }
-
-            // Actual tabs
+            // Actual tabs with indicator
             ScrollableTabRow(
                 selectedTabIndex = currentPage,
                 edgePadding = 8.dp,
                 containerColor = Color.Transparent,
                 contentColor = Color.White.copy(alpha = 0.9f),
                 divider = {},
-                indicator = {} // We're using our custom indicator
+                indicator = { tabPositions ->
+                    if (tabPositions.isNotEmpty() && currentPage < tabPositions.size - 1) {
+                        val currentTabPosition = tabPositions[currentPage]
+
+                        // Glowing circle indicator
+                        Box(
+                            Modifier.tabIndicatorOffset(currentTabPosition)
+                        ) {
+                            Canvas(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .blur(50.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+                            ) {
+                                drawCircle(
+                                    color = accentColor.copy(alpha = 0.6f),
+                                    radius = size.height / 2,
+                                    center = Offset(size.width / 2, size.height / 2)
+                                )
+                            }
+
+                            // Animated border effect
+                            Canvas(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                drawLine(
+                                    brush = Brush.horizontalGradient(
+                                        colors = listOf(
+                                            accentColor.copy(alpha = 0f),
+                                            accentColor.copy(alpha = 0.8f),
+                                            accentColor.copy(alpha = 0.8f),
+                                            accentColor.copy(alpha = 0f)
+                                        )
+                                    ),
+                                    start = Offset(0f, size.height - 2f),
+                                    end = Offset(size.width, size.height - 2f),
+                                    strokeWidth = 2f
+                                )
+                            }
+                        }
+                    }
+                }
             ) {
                 displayCategories.forEachIndexed { index, category ->
                     val isSelected = index == currentPage
