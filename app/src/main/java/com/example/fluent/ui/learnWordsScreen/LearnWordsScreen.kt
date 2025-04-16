@@ -33,7 +33,7 @@ import com.example.fluent.navigation.BlurredAppNavigationBar
 import com.example.fluent.navigation.Screen
 import com.example.fluent.ui.components.ConfirmButton
 import com.example.fluent.ui.components.FullScreenBlurredBackground
-import com.example.fluent.ui.components.ProgressBar
+import com.example.fluent.ui.components.AnimatedProgressBar
 
 
 @Composable
@@ -71,7 +71,8 @@ fun LearnWordsScreen(
                                 text = "Your progress",
                                 modifier = Modifier.padding(bottom = 4.dp),
                             )
-                            ProgressBar(progress = progress)
+                            AnimatedProgressBar(progress = progress)
+
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
