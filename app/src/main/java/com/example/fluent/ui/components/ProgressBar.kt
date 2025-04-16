@@ -22,6 +22,26 @@ import androidx.compose.ui.geometry.Offset
 import kotlin.math.PI
 import kotlin.math.sin
 import kotlin.random.Random
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.geometry.CornerRadius
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.toArgb
+import android.graphics.BlurMaskFilter
+
+
+
+import androidx.compose.ui.unit.dp
+
 
 private data class GlitterParticle(
     val id: Int,
@@ -92,8 +112,49 @@ fun AnimatedProgressBar(progress: Float) {
                 .fillMaxWidth(animatedProgress)
                 .height(12.dp)
                 .clip(RoundedCornerShape(60.dp))
+                .drawBehind {
+                    // Glow efekt za paskiem
+                    drawRoundRect(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                NeonMagenta.copy(alpha = 0.6f),
+                                Color.Transparent
+                            ),
+                            center = center,
+                            radius = size.height * 3f
+                        ),
+                        size = size,
+                        cornerRadius = CornerRadius(60f, 60f)
+                    )
+                }
+                .drawBehind {
+                    val paint = Paint().apply {
+                        asFrameworkPaint().apply {
+                            isAntiAlias = true
+                            color = NeonMagenta.copy(alpha = 0.6f).toArgb()
+                            maskFilter = BlurMaskFilter(40f, BlurMaskFilter.Blur.NORMAL)
+                        }
+                    }
+
+                    drawIntoCanvas { canvas ->
+                        canvas.drawRoundRect(
+                            left = 0f,
+                            top = -size.height / 2f,
+                            right = size.width,
+                            bottom = size.height * 1.5f,
+                            radiusX = 60.dp.toPx(),
+                            radiusY = 60.dp.toPx(),
+                            paint = paint
+                        )
+                    }
+
+
+    }
                 .background(animatedBrush)
         )
+
+
+
 
         if (animatedProgress > 0.01f) {
             GlitterEffect(
@@ -157,23 +218,33 @@ private fun GlitterEffect(progress: Float, modifier: Modifier = Modifier) {
                     val center = Offset(x, (particle.y + driftY) * canvasHeight)
 
                     if (particle.isBright) {
-                        val paint = Paint().apply {
-                            this.color = particle.color
-                            this.asFrameworkPaint().apply {
-                                isAntiAlias = true
-                                maskFilter = android.graphics.BlurMaskFilter(radius, android.graphics.BlurMaskFilter.Blur.NORMAL)
-                            }
-                        }
-                        canvas.drawCircle(center, radius, paint)
-                    } else {
+                        // Glow aura effect
                         drawCircle(
-                            color = particle.color,
-                            radius = radius,
+                            color = particle.color.copy(alpha = 0.1f),
+                            radius = radius * 3f,
                             center = center
                         )
+                        drawCircle(
+                            color = particle.color.copy(alpha = 0.2f),
+                            radius = radius * 2f,
+                            center = center
+                        )
+                        drawCircle(
+                            color = particle.color.copy(alpha = 0.4f),
+                            radius = radius * 1.4f,
+                            center = center
+                        )
+                    }
+
+// Główna cząstka (zawsze rysowana)
+                    drawCircle(
+                        color = particle.color,
+                        radius = radius,
+                        center = center
+                    )
                     }
                 }
             }
         }
     }
-}
+
