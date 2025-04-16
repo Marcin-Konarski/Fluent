@@ -120,8 +120,7 @@ private fun GlitterEffect(progress: Float, modifier: Modifier = Modifier) {
                     isBright -> Color.White.copy(alpha = 0.8f)
                     else -> listOf(
                         VividMagenta.copy(alpha = 0.8f),
-                        OrchidMagenta.copy(alpha = 0.8f),
-                        NeonMagenta.copy(alpha = 0.8f)
+                        OrchidMagenta.copy(alpha = 0.8f)
                     ).random()
                 },
                 speed = 0.3f + Random.nextFloat() * 0.4f,
