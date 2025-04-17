@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import android.graphics.BlurMaskFilter
+import androidx.compose.ui.Alignment
 
 
 
@@ -99,74 +100,98 @@ fun AnimatedProgressBar(progress: Float) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(12.dp)
-            .clip(RoundedCornerShape(60.dp))
-            .background(
-                Brush.horizontalGradient(
-                    colors = listOf(Color.LightGray, Color.Gray)
-                )
-            )
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(animatedProgress)
-                .height(12.dp)
-                .clip(RoundedCornerShape(60.dp))
-                .drawBehind {
-                    // Glow efekt za paskiem
-                    drawRoundRect(
-                        brush = Brush.radialGradient(
-                            colors = listOf(
-                                NeonMagenta.copy(alpha = 0.6f),
-                                Color.Transparent
-                            ),
-                            center = center,
-                            radius = size.height * 3f
-                        ),
-                        size = size,
-                        cornerRadius = CornerRadius(60f, 60f)
+            .height(20.dp) // Zwiększona wysokość dla efektu 3D
+            .drawBehind {
+                val cornerRadius = 60.dp.toPx()
+                // Tło dla całego paska (cień/glow)
+                val paint = Paint().apply {
+                    asFrameworkPaint().apply {
+                        isAntiAlias = true
+                        color = NeonMagenta.copy(alpha = 0.5f).toArgb()
+                        maskFilter = BlurMaskFilter(40f, BlurMaskFilter.Blur.NORMAL)
+                    }
+                }
+
+                drawIntoCanvas { canvas ->
+                    val shift = 4.dp.toPx()
+                    val glowTop = size.height / 2f - size.height * 0.6f
+                    val glowBottom = size.height / 2f + size.height * 0.6f
+                    canvas.drawRoundRect(
+                        left = 0f,
+                        top = glowTop + shift,
+                        right = size.width,
+                        bottom = glowBottom + shift,
+                        radiusX = cornerRadius,
+                        radiusY = cornerRadius,
+                        paint = paint
                     )
                 }
-                .drawBehind {
-                    val paint = Paint().apply {
-                        asFrameworkPaint().apply {
-                            isAntiAlias = true
-                            color = NeonMagenta.copy(alpha = 0.6f).toArgb()
-                            maskFilter = BlurMaskFilter(40f, BlurMaskFilter.Blur.NORMAL)
+            }
+    ) {
+        // Główny kontener dla paska postępu
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(12.dp)
+                .align(Alignment.BottomCenter) // Ustawienie na dole dla efektu 3D
+                .clip(RoundedCornerShape(60.dp))
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(Color.LightGray, Color.Gray)
+                    )
+                )
+        ) {
+            // 1. Efekt glow pod spodem (dodatkowy blur dla efektu 3D)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(animatedProgress)
+                    .height(24.dp)
+                    .drawBehind {
+                        val paint = Paint().apply {
+                            asFrameworkPaint().apply {
+                                isAntiAlias = true
+                                color = NeonMagenta.copy(alpha = 0.7f).toArgb()
+                                maskFilter = BlurMaskFilter(30f, BlurMaskFilter.Blur.NORMAL)
+                            }
+                        }
+
+                        drawIntoCanvas { canvas ->
+                            canvas.drawRoundRect(
+                                left = 0f,
+                                top = -size.height / 2f,
+                                right = size.width,
+                                bottom = size.height * 1.8f, // Większy obszar blur na dole
+                                radiusX = 60.dp.toPx(),
+                                radiusY = 60.dp.toPx(),
+                                paint = paint
+                            )
                         }
                     }
+            )
 
-                    drawIntoCanvas { canvas ->
-                        canvas.drawRoundRect(
-                            left = 0f,
-                            top = -size.height / 2f,
-                            right = size.width,
-                            bottom = size.height * 1.5f,
-                            radiusX = 60.dp.toPx(),
-                            radiusY = 60.dp.toPx(),
-                            paint = paint
-                        )
-                    }
-
-
-    }
-                .background(animatedBrush)
-        )
-
-
-
-
-        if (animatedProgress > 0.01f) {
-            GlitterEffect(
-                progress = animatedProgress,
+            // 2. Gradientowy pasek (animowany)
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(animatedProgress)
                     .height(12.dp)
                     .clip(RoundedCornerShape(60.dp))
+                    .background(animatedBrush)
             )
+
+            // 3. Brokat (nad gradientem)
+            if (animatedProgress > 0.01f) {
+                GlitterEffect(
+                    progress = animatedProgress,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(12.dp)
+                        .clip(RoundedCornerShape(60.dp))
+                )
+            }
         }
     }
 }
+
 
 @Composable
 private fun GlitterEffect(progress: Float, modifier: Modifier = Modifier) {
