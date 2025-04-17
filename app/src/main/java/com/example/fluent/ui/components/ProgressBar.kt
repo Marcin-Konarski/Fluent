@@ -100,20 +100,20 @@ fun AnimatedProgressBar(progress: Float) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(20.dp) // Zwiększona wysokość dla efektu 3D
+            .height(12.dp) // Zwiększona wysokość dla efektu 3D
             .drawBehind {
                 val cornerRadius = 60.dp.toPx()
                 // Tło dla całego paska (cień/glow)
                 val paint = Paint().apply {
                     asFrameworkPaint().apply {
                         isAntiAlias = true
-                        color = NeonMagenta.copy(alpha = 0.5f).toArgb()
+                        color = NeonMagenta.copy(alpha = 0.8f).toArgb()
                         maskFilter = BlurMaskFilter(40f, BlurMaskFilter.Blur.NORMAL)
                     }
                 }
 
                 drawIntoCanvas { canvas ->
-                    val shift = 4.dp.toPx()
+                    val shift = 0.dp.toPx()
                     val glowTop = size.height / 2f - size.height * 0.6f
                     val glowBottom = size.height / 2f + size.height * 0.6f
                     canvas.drawRoundRect(
