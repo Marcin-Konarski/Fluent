@@ -107,7 +107,7 @@ fun AnimatedProgressBar(progress: Float) {
                 val paint = Paint().apply {
                     asFrameworkPaint().apply {
                         isAntiAlias = true
-                        color = NeonMagenta.copy(alpha = 0.8f).toArgb()
+                        color = DeepMagenta.copy(alpha = 0.9f).toArgb()
                         maskFilter = BlurMaskFilter(40f, BlurMaskFilter.Blur.NORMAL)
                     }
                 }
