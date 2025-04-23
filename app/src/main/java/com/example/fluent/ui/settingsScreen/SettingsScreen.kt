@@ -54,7 +54,7 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.padding(16.dp))
+                Spacer(modifier = Modifier.padding(12.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -66,7 +66,7 @@ fun SettingsScreen(
                         color = MaterialTheme.colorScheme.onBackground,
                     )
                 }
-                Spacer(modifier = Modifier.padding(2.dp))
+                Spacer(modifier = Modifier.padding(0.dp))
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
