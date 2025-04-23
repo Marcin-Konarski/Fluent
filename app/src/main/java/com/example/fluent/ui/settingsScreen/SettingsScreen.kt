@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -47,9 +48,9 @@ fun SettingsScreen(
                     .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.padding(12.dp))// Dodany Spacer
+                Spacer(modifier = Modifier.padding(12.dp))
                 Text(
-                    text = "Settings",
+                    text = "SETTINGS",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
@@ -57,13 +58,31 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.padding(12.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp), // Dodajemy padding po bokach Row
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center // Wyśrodkowanie w Row
                 ) {
+                    Divider(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp),
+                        color = Color.White,
+                        thickness = 1.dp
+                    )
                     Text(
                         text = "Theme Selection",
                         style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
                         color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center, // Wyśrodkowanie tekstu
+                    )
+                    Divider(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp),
+                        color = Color.White,
+                        thickness = 1.dp
                     )
                 }
                 Spacer(modifier = Modifier.padding(0.dp))
