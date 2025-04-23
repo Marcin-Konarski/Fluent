@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import com.example.fluent.ui.theme.DeepMagenta
+import com.example.fluent.ui.theme.LocalAppTheme
 
 @Composable
 fun ConfirmButton(
@@ -29,6 +30,7 @@ fun ConfirmButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed = interactionSource.collectIsPressedAsState().value
     val scale = animateFloatAsState(if (isPressed) 0.96f else 1f, label = "")
+    val appTheme = LocalAppTheme.current
 
     Button(
         onClick = onClick,
@@ -40,7 +42,7 @@ fun ConfirmButton(
             .offset(y = (-60).dp),
         interactionSource = interactionSource,
         colors = ButtonDefaults.buttonColors(
-            containerColor = DeepMagenta,
+            containerColor = appTheme.primaryColor,
             contentColor = Color.White
         ),
         shape = RoundedCornerShape(16.dp),

@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import android.graphics.BlurMaskFilter
 import androidx.compose.ui.Alignment
+import com.example.fluent.ui.theme.LocalAppTheme
 
 
 
@@ -56,6 +57,7 @@ private data class GlitterParticle(
 
 @Composable
 fun AnimatedProgressBar(progress: Float) {
+    val appTheme = LocalAppTheme.current
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
         animationSpec = tween(durationMillis = 600),
@@ -87,9 +89,9 @@ fun AnimatedProgressBar(progress: Float) {
 
     val gradientEndOffset = gradientStartOffset + (0.3f + gradientOffset * 0.2f)
 
-    val startColor = DeepMagenta
-    val middleColor = OrchidMagenta
-    val endColor = VividMagenta
+    val startColor = appTheme.primaryColor
+    val middleColor = appTheme.secondaryColor
+    val endColor = appTheme.tertiaryColor
 
     val animatedBrush = Brush.horizontalGradient(
         colors = listOf(startColor, middleColor, endColor),
@@ -107,7 +109,7 @@ fun AnimatedProgressBar(progress: Float) {
                 val paint = Paint().apply {
                     asFrameworkPaint().apply {
                         isAntiAlias = true
-                        color = DeepMagenta.copy(alpha = 0.9f).toArgb()
+                        color = startColor.copy(alpha = 0.9f).toArgb()
                         maskFilter = BlurMaskFilter(40f, BlurMaskFilter.Blur.NORMAL)
                     }
                 }
@@ -150,7 +152,7 @@ fun AnimatedProgressBar(progress: Float) {
                         val paint = Paint().apply {
                             asFrameworkPaint().apply {
                                 isAntiAlias = true
-                                color = NeonMagenta.copy(alpha = 0.7f).toArgb()
+                                color = appTheme.quaternaryColor.copy(alpha = 0.7f).toArgb()
                                 maskFilter = BlurMaskFilter(30f, BlurMaskFilter.Blur.NORMAL)
                             }
                         }
@@ -195,6 +197,7 @@ fun AnimatedProgressBar(progress: Float) {
 
 @Composable
 private fun GlitterEffect(progress: Float, modifier: Modifier = Modifier) {
+    val appTheme = LocalAppTheme.current
     val glitterParticles = remember {
         List(35) { id ->
             val isBright = id % 8 == 0 // co któryś brokat będzie jasny i z blur
@@ -205,8 +208,8 @@ private fun GlitterEffect(progress: Float, modifier: Modifier = Modifier) {
                 color = when {
                     isBright -> Color.White.copy(alpha = 0.8f)
                     else -> listOf(
-                        VividMagenta.copy(alpha = 0.8f),
-                        OrchidMagenta.copy(alpha = 0.8f)
+                        appTheme.tertiaryColor.copy(alpha = 0.8f),
+                        appTheme.secondaryColor.copy(alpha = 0.8f)
                     ).random()
                 },
                 speed = 0.3f + Random.nextFloat() * 0.4f,
