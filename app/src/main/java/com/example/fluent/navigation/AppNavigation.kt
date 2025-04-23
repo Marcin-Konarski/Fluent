@@ -14,21 +14,25 @@ import com.example.fluent.ui.learnWordsScreen.SharedViewModel
 import com.example.fluent.ui.flashCardsScreen.FlashCardsScreen
 import com.example.fluent.ui.learnWordsScreen.LearnWordsScreen
 import com.example.fluent.ui.settingsScreen.SettingsScreen
+import com.example.fluent.ui.theme.AppTheme
 
 sealed class Screen(val route: String) {
-    object Screen1: Screen("screen1")  // FlashCards
-    object Screen2: Screen("screen2")  // ListWords (Main)
-    object Screen3: Screen("screen3")  // AddWord
-    object Screen4: Screen("screen4")  // LearnWords
-    object Screen5: Screen("screen5")  // Settings
+    object Screen1 : Screen("screen1")  // FlashCards
+    object Screen2 : Screen("screen2")  // ListWords (Main)
+    object Screen3 : Screen("screen3")  // AddWord
+    object Screen4 : Screen("screen4")  // LearnWords
+    object Screen5 : Screen("screen5")  // Settings
 
-    object Details: Screen("details/{itemId}") {
+    object Details : Screen("details/{itemId}") {
         fun createRoute(itemId: Int) = "details/$itemId" // Details
     }
 }
 
 @Composable
-fun AppNavigation(navController: NavHostController) {
+fun AppNavigation(
+    navController: NavHostController,
+    onThemeChange: (AppTheme) -> Unit
+) {
     val sharedViewModel: SharedViewModel = hiltViewModel()
 
     NavHost(
@@ -66,7 +70,7 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable(Screen.Screen5.route) {
-            SettingsScreen(navController = navController)
+            SettingsScreen(navController = navController, onThemeChange = onThemeChange) // Przekazanie onThemeChange
         }
 
         composable(
