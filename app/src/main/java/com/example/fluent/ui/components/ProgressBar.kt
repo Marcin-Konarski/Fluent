@@ -52,7 +52,7 @@ private data class GlitterParticle(
     val color: Color,
     val speed: Float,
     val size: Float,
-    val isBright: Boolean = false // czy to jasna cząstka z blur
+    val isBright: Boolean = false
 )
 
 @Composable
@@ -200,7 +200,7 @@ private fun GlitterEffect(progress: Float, modifier: Modifier = Modifier) {
     val appTheme = LocalAppTheme.current
     val glitterParticles = remember {
         List(35) { id ->
-            val isBright = id % 8 == 0 // co któryś brokat będzie jasny i z blur
+            val isBright = id % 8 == 0
             GlitterParticle(
                 id = id,
                 initialOffset = Random.nextFloat(),
