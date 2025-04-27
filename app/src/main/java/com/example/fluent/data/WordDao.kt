@@ -45,9 +45,7 @@ interface WordDao {
         val categoryName: String
     )
 
-
     // To delete all words inside the category while category is deleted
     @Query("DELETE FROM word WHERE categoryId = :categoryId")
     suspend fun deleteWordsByCategoryId(categoryId: Int)
-
 }

@@ -18,6 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +34,9 @@ import com.example.fluent.WordEventForLearnWordsScreen
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.navigation.BlurredAppNavigationBar
 import com.example.fluent.navigation.Screen
+import com.example.fluent.ui.categorySelection.CategoriesViewModel
+import com.example.fluent.ui.categorySelection.CategoryManagementDialog
+import com.example.fluent.ui.categorySelection.CategorySelection
 import com.example.fluent.ui.components.ConfirmButton
 import com.example.fluent.ui.components.FullScreenBlurredBackground
 import com.example.fluent.ui.components.AnimatedProgressBar
@@ -39,7 +45,8 @@ import com.example.fluent.ui.components.AnimatedProgressBar
 @Composable
 fun LearnWordsScreen(
     navController: NavHostController,
-    viewModel: SharedViewModel = hiltViewModel()
+    viewModel: LearnWordsViewModel = hiltViewModel(),
+    categoriesViewModel: CategoriesViewModel = hiltViewModel(),
 ) {
     val currentWord by viewModel.currentWord.collectAsState()
     val userInput by viewModel.userInput.collectAsState()
@@ -49,6 +56,11 @@ fun LearnWordsScreen(
     val learnedWords by viewModel.learnedWords.collectAsState()
     val leftWords by viewModel.leftWords.collectAsState()
 
+    val categories = viewModel.categories.collectAsState(initial = emptyList()).value
+    val selectedCategoryId = viewModel.selectedCategoryId.collectAsState().value
+    val uiState by categoriesViewModel.uiState.collectAsState()
+    var showCategoryManagementDialog by remember { mutableStateOf(false) } // Variable to show/hide 'Category management' dialog
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -56,10 +68,42 @@ fun LearnWordsScreen(
 //            wallpaperResource = R.drawable.black1,
             blurRadius = 5.dp,
         ) {
+
+            // Display category management dialog
+            if (showCategoryManagementDialog) {
+                CategoryManagementDialog(
+                    categories = uiState.categories,
+                    onDismiss = { showCategoryManagementDialog = false },
+                    onAddCategory = { newCategoryName ->
+                        categoriesViewModel.addCategory(newCategoryName)
+                    },
+                    onRenameCategory = { category, newName ->
+                        categoriesViewModel.renameCategory(category, newName)
+                    },
+                    categoriesViewModel = categoriesViewModel
+                )
+            }
+
+
+
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Top Bar
+                // Display all categories in a row
+                CategorySelection(
+                    categories = categories.map { it.name },
+                    selectedCategory = categories.find { it.id == selectedCategoryId }?.name.orEmpty(),
+                    onCategorySelected = { selectedName ->
+                        val selected = categories.find { it.name == selectedName }
+                        viewModel.selectCategory(selected?.id)
+                    },
+                    onAddCategory = {
+                        showCategoryManagementDialog = true
+                    }
+                )
+
+                // Spacer(modifier = Modifier.height(5.dp))
+                // Progress Bar
                 Column {
                     Box(
                         modifier = Modifier
@@ -97,9 +141,9 @@ fun LearnWordsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp)
+                        .padding(start = 16.dp, end = 16.dp, top = 120.dp)
                         .imePadding(),
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(

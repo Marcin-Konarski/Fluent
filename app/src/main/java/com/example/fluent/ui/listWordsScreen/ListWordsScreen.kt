@@ -31,7 +31,6 @@ fun ListWordsScreen(
     viewModel: ListWordsViewModel = hiltViewModel(),
     categoriesViewModel: CategoriesViewModel = hiltViewModel(),
     onItemClick: (Int) -> Unit,
-    onButtonClick: () -> Unit
 ) {
     val wordList = viewModel.wordList.collectAsState(initial = emptyList()).value
     val categories = viewModel.categories.collectAsState(initial = emptyList()).value

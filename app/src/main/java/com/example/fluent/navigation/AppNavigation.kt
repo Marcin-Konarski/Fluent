@@ -10,7 +10,7 @@ import androidx.navigation.navArgument
 import com.example.fluent.ui.listWordsScreen.ListWordsScreen
 import com.example.fluent.ui.detailsScreen.DetailsScreen
 import com.example.fluent.ui.addWordScreen.AddWordScreen
-import com.example.fluent.ui.learnWordsScreen.SharedViewModel
+import com.example.fluent.ui.learnWordsScreen.LearnWordsViewModel
 import com.example.fluent.ui.flashCardsScreen.FlashCardsScreen
 import com.example.fluent.ui.learnWordsScreen.LearnWordsScreen
 import com.example.fluent.ui.settingsScreen.SettingsScreen
@@ -33,7 +33,7 @@ fun AppNavigation(
     navController: NavHostController,
     onThemeChange: (AppTheme) -> Unit
 ) {
-    val sharedViewModel: SharedViewModel = hiltViewModel()
+    val learnWordsViewModel: LearnWordsViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
@@ -49,9 +49,6 @@ fun AppNavigation(
                 onItemClick = { itemId ->
                     navController.navigate(Screen.Details.createRoute(itemId))
                 },
-                onButtonClick = {
-                    navController.navigate(Screen.Screen3.route)
-                }
             )
         }
 
@@ -65,12 +62,15 @@ fun AppNavigation(
         composable(Screen.Screen4.route) {
             LearnWordsScreen(
                 navController = navController,
-                viewModel = sharedViewModel,
+                viewModel = learnWordsViewModel,
             )
         }
 
         composable(Screen.Screen5.route) {
-            SettingsScreen(navController = navController, onThemeChange = onThemeChange) // Przekazanie onThemeChange
+            SettingsScreen(
+                navController = navController,
+                onThemeChange = onThemeChange
+            )
         }
 
         composable(
@@ -83,9 +83,7 @@ fun AppNavigation(
             DetailsScreen(
                 navController = navController,
                 itemId = itemId,
-                onBackClick = {
-                    navController.popBackStack()
-                }
+                onBackClick = { navController.popBackStack() }
             )
         }
     }

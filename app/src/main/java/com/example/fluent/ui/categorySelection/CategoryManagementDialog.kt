@@ -1,5 +1,6 @@
 package com.example.fluent.ui.categorySelection
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +22,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fluent.data.Category
 import com.example.fluent.ui.components.AppTextField
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+
+
 @Composable
 fun CategoryManagementDialog(
     categories: List<Category>,
@@ -39,134 +54,208 @@ fun CategoryManagementDialog(
         categories.map { it to mutableStateOf(it.name) }.toMutableStateList()
     }
 
-    AlertDialog(
+    // Use Dialog instead of AlertDialog for more customization
+    Dialog(
         onDismissRequest = onDismiss,
-        title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Manage Categories")
-                IconButton(onClick = {
-                    newCategoryName = ""
-                    showNewCategoryField = true
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add new category"
-                    )
-                }
-            }
-        },
-        text = {
-            Column(
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        val dialogShape = RoundedCornerShape(28.dp)
+
+        // Overall container
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(0.95f)
+                .wrapContentHeight(),
+            shape = dialogShape,
+            color = Color.Transparent // Important! We don't want default Surface color
+        ) {
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(scrollState)
-                    .padding(vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .fillMaxWidth(0.95f)
+                    .wrapContentHeight()
+                    .clip(dialogShape)
             ) {
-                if (categories.isEmpty() && !showNewCategoryField) {
-                    Text(
-                        text = "No categories yet",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                } else {
-                    editableCategories.forEach { (category, nameState) ->
-                        if (!categoriesToDelete.contains(category)) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .blur(50.dp)
+                        .background(Color.Black.copy(alpha = 0.7f))
+                        .clip(dialogShape)
+                )
+
+                // Gradient and border layer (your previous design)
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.01f),
+                                    Color.White.copy(alpha = 0.02f)
+                                )
+                            )
+                        )
+                        .border(
+                            width = Dp.Hairline,
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.15f),
+                                    Color.White.copy(alpha = 0.1f),
+                                )
+                            ),
+                            shape = dialogShape
+                        )
+                )
+
+
+
+
+
+                // Content layer (non-blurred)
+                Column(modifier = Modifier.padding(24.dp)) {
+                    // Title section with Add button
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            "Manage Categories",
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        IconButton(onClick = {
+                            newCategoryName = ""
+                            showNewCategoryField = true
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add new category"
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Categories list
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(scrollState)
+                            .padding(vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        if (categories.isEmpty() && !showNewCategoryField) {
+                            Text(
+                                text = "No categories yet",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        } else {
+                            editableCategories.forEach { (category, nameState) ->
+                                if (!categoriesToDelete.contains(category)) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        AppTextField(
+                                            value = nameState.value,
+                                            onValueChange = { nameState.value = it },
+                                            label = { Text("Category name") },
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        IconButton(
+                                            onClick = { showDeleteWarningFor = category },
+                                            modifier = Modifier.padding(start = 8.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = "Delete ${category.name}",
+                                                tint = Color.Red
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // New Category Input Field
+                        if (showNewCategoryField) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 AppTextField(
-                                    value = nameState.value,
-                                    onValueChange = { nameState.value = it },
+                                    value = newCategoryName,
+                                    onValueChange = { newCategoryName = it },
                                     label = { Text("Category name") },
                                     modifier = Modifier.weight(1f)
                                 )
+
                                 IconButton(
-                                    onClick = { showDeleteWarningFor = category },
-                                    modifier = Modifier.padding(start = 8.dp)
+                                    onClick = {
+                                        newCategoryName = ""
+                                        showNewCategoryField = false
+                                    },
+                                    modifier = Modifier.padding(start = 4.dp)
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Delete,
-                                        contentDescription = "Delete ${category.name}",
+                                        contentDescription = "Cancel adding category",
                                         tint = Color.Red
                                     )
                                 }
                             }
                         }
                     }
-                }
 
-                // New Category Input Field
-                if (showNewCategoryField) {
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // Action buttons
                     Row(
                         modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        AppTextField(
-                            value = newCategoryName,
-                            onValueChange = { newCategoryName = it },
-                            label = { Text("Category name") },
-                            modifier = Modifier.weight(1f)
-                        )
+                        TextButton(onClick = onDismiss) {
+                            Text("Cancel")
+                        }
 
-                        IconButton(
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        TextButton(
                             onClick = {
-                                newCategoryName = ""
-                                showNewCategoryField = false
-                            },
-                            modifier = Modifier.padding(start = 4.dp)
+                                // Handle new category addition
+                                if (showNewCategoryField && newCategoryName.isNotBlank()) {
+                                    onAddCategory(newCategoryName.trim())
+                                    newCategoryName = ""
+                                    showNewCategoryField = false
+                                }
+
+                                // Handle renaming
+                                editableCategories.forEach { (category, nameState) ->
+                                    if (nameState.value.isNotBlank() && nameState.value != category.name) {
+                                        onRenameCategory(category, nameState.value.trim())
+                                    }
+                                }
+
+                                // Handle deletions
+                                categoriesToDelete.forEach { category ->
+                                    categoriesViewModel.deleteCategoryAndWords(category)
+                                }
+
+                                onDismiss()
+                            }
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "Cancel adding category",
-                                tint = Color.Red
-                            )
+                            Text("Done")
                         }
                     }
                 }
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    // Handle new category addition here
-                    if (showNewCategoryField && newCategoryName.isNotBlank()) {
-                        onAddCategory(newCategoryName.trim())
-                        newCategoryName = ""
-                        showNewCategoryField = false
-                    }
-
-                    // Handle renaming
-                    editableCategories.forEach { (category, nameState) ->
-                        if (nameState.value.isNotBlank() && nameState.value != category.name) {
-                            onRenameCategory(category, nameState.value.trim())
-                        }
-                    }
-
-                    // Handle deletions
-                    categoriesToDelete.forEach { category ->
-                        categoriesViewModel.deleteCategoryAndWords(category)
-                    }
-
-                    onDismiss()
-                }
-            ) {
-                Text("Done")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
             }
         }
-    )
+    }
 
+    // Delete warning dialog (separate AlertDialog)
     if (showDeleteWarningFor != null) {
         AlertDialog(
             onDismissRequest = { showDeleteWarningFor = null },
