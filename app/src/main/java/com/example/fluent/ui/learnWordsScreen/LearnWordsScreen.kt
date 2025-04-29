@@ -65,149 +65,154 @@ fun LearnWordsScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         FullScreenBlurredBackground(
-//            wallpaperResource = R.drawable.black1,
             blurRadius = 5.dp,
         ) {
-
-            // Display category management dialog
-            if (showCategoryManagementDialog) {
-                CategoryManagementDialog(
-                    categories = uiState.categories,
-                    onDismiss = { showCategoryManagementDialog = false },
-                    onAddCategory = { newCategoryName ->
-                        categoriesViewModel.addCategory(newCategoryName)
-                    },
-                    onRenameCategory = { category, newName ->
-                        categoriesViewModel.renameCategory(category, newName)
-                    },
-                    categoriesViewModel = categoriesViewModel
-                )
-            }
-
-
-
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 8.dp)
             ) {
-                // Display all categories in a row
-                CategorySelection(
-                    categories = categories.map { it.name },
-                    selectedCategory = categories.find { it.id == selectedCategoryId }?.name.orEmpty(),
-                    onCategorySelected = { selectedName ->
-                        val selected = categories.find { it.name == selectedName }
-                        viewModel.selectCategory(selected?.id)
-                    },
-                    onAddCategory = {
-                        showCategoryManagementDialog = true
-                    }
-                )
+                // Display category management dialog
+                if (showCategoryManagementDialog) {
+                    CategoryManagementDialog(
+                        categories = uiState.categories,
+                        onDismiss = { showCategoryManagementDialog = false },
+                        onAddCategory = { newCategoryName ->
+                            categoriesViewModel.addCategory(newCategoryName)
+                        },
+                        onRenameCategory = { category, newName ->
+                            categoriesViewModel.renameCategory(category, newName)
+                        },
+                        categoriesViewModel = categoriesViewModel
+                    )
+                }
 
-                // Spacer(modifier = Modifier.height(5.dp))
-                // Progress Bar
-                Column {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 16.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.End) {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    // Display all categories in a row
+                    CategorySelection(
+                        categories = categories.map { it.name },
+                        selectedCategory = categories.find { it.id == selectedCategoryId }?.name.orEmpty(),
+                        onCategorySelected = { selectedName ->
+                            val selected = categories.find { it.name == selectedName }
+                            viewModel.selectCategory(selected?.id)
+                        },
+                        onAddCategory = {
+                            showCategoryManagementDialog = true
+                        }
+                    )
+
+                    // Progress Bar
+                    Column {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 16.dp)
+                        ) {
+                            Column(horizontalAlignment = Alignment.End) {
+                                Text(
+                                    text = "Your progress",
+                                    modifier = Modifier.padding(bottom = 4.dp),
+                                )
+                                AnimatedProgressBar(progress = progress)
+
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                        ) {
                             Text(
-                                text = "Your progress",
-                                modifier = Modifier.padding(bottom = 4.dp),
+                                text = "Learned: $learnedWords",
+                                modifier = Modifier.offset(x = -10.dp)
                             )
-                            AnimatedProgressBar(progress = progress)
-
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = "Left: $leftWords",
+                                modifier = Modifier.offset(x = -5.dp)
+                            )
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
+
+                    // Content
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                            .fillMaxSize()
+                            .padding(start = 16.dp, end = 16.dp, top = 120.dp)
+                            .imePadding(),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Learned: $learnedWords",
-                            modifier = Modifier.offset(x = -10.dp)
+                            text = correctWord ?: " ",
+                            color = Color.Yellow,
+                            modifier = Modifier
+                                .offset(y = (-60).dp)
+                                .height(24.dp)
                         )
-                        Spacer(modifier = Modifier.weight(1f))
+
+                        Spacer(modifier = Modifier.height(2.dp))
+
                         Text(
-                            text = "Left: $leftWords",
-                            modifier = Modifier.offset(x = -5.dp)
+                            text = currentWord?.translation ?: "No more words",
+                            modifier = Modifier.offset(y = (-60).dp)
+                        )
+
+                        AppTextField(
+                            value = userInput,
+                            onValueChange = {
+                                viewModel.onEvent(
+                                    WordEventForLearnWordsScreen.SetWordInputLearnWords(
+                                        it
+                                    )
+                                )
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    viewModel.onEvent(WordEventForLearnWordsScreen.CheckAnswer)
+                                }
+                            ),
+                            label = {
+                                Text(text = "Word")
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp)
+                                .offset(y = (-60).dp)
+                        )
+
+                        ConfirmButton(
+                            onClick = {
+                                if (leftWords == 0) {
+                                    keyboardController?.hide()
+                                    viewModel.resetLearningProgress()
+                                    navController.navigate(Screen.Screen4.route) {
+                                        popUpTo(Screen.Screen4.route) { inclusive = true }
+                                    }
+                                } else {
+                                    viewModel.onEvent(WordEventForLearnWordsScreen.CheckAnswer)
+                                }
+                            },
+                            buttonText = if (leftWords == 0) "Finish" else if (correctWord != null) "Next Word" else "Confirm"
                         )
                     }
                 }
-
-                // Content
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 16.dp, end = 16.dp, top = 120.dp)
-                        .imePadding(),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = correctWord ?: " ",
-                        color = Color.Yellow,
-                        modifier = Modifier
-                            .offset(y = (-60).dp)
-                            .height(24.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(2.dp))
-
-                    Text(
-                        text = currentWord?.translation ?: "No more words",
-                        modifier = Modifier.offset(y = (-60).dp)
-                    )
-
-                    AppTextField(
-                        value = userInput,
-                        onValueChange = {
-                            viewModel.onEvent(WordEventForLearnWordsScreen.SetWordInputLearnWords(it))
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                viewModel.onEvent(WordEventForLearnWordsScreen.CheckAnswer)
-                            }
-                        ),
-                        label = {
-                            Text(text = "Word")
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp)
-                            .offset(y = (-60).dp)
-                    )
-
-                    ConfirmButton(
-                        onClick = {
-                            if (leftWords == 0) {
-                                keyboardController?.hide()
-                                viewModel.resetLearningProgress()
-                                navController.navigate(Screen.Screen4.route) {
-                                    popUpTo(Screen.Screen4.route) { inclusive = true }
-                                }
-                            } else {
-                                viewModel.onEvent(WordEventForLearnWordsScreen.CheckAnswer)
-                            }
-                        },
-                        buttonText = if (leftWords == 0) "Finish" else if (correctWord != null) "Next Word" else "Confirm"
-                    )
-                }
             }
-        }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-        ) {
-            BlurredAppNavigationBar(navController = navController)
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+            ) {
+                BlurredAppNavigationBar(navController = navController)
+            }
         }
     }
 }

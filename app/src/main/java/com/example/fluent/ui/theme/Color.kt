@@ -2,7 +2,6 @@ package com.example.fluent.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// 🌊 **Blues** - Cool, Deep, and Electric
 val IceBlue = Color(0xFFE0F7FA)        // Very light icy blue
 val SkyBlue = Color(0xFF81D4FA)        // Light sky blue
 val AquaBlue = Color(0xFF4FC3F7)       // Soft aqua blue
@@ -13,7 +12,6 @@ val DeepBlue = Color(0xFF0D47A1)       // Deep midnight blue
 val SapphireBlue = Color(0xFF283593)   // Rich sapphire blue
 val NavyBlue = Color(0xFF1A237E)       // Classic navy blue
 
-// 🌸 **Pinks** - Soft, Playful, and Bold
 val BabyPink = Color(0xFFFFC1E3)       // Very soft pastel pink
 val BlushPink = Color(0xFFFF80AB)      // Soft blush pink
 val CoralPink = Color(0xFFFF6473)      // Warm coral pink
@@ -23,7 +21,6 @@ val HotPink = Color(0xFFFF007F)        // Bold hot pink
 val DeepRose = Color(0xFFC2185B)       // Rich deep rose pink
 val RaspberryPink = Color(0xFFE91E63)  // Raspberry-like pink
 
-// 💜 **Magentas & Purples** - Rich and Bold
 val LightMagenta = Color(0xFFF48FB1)   // Soft pastel magenta
 val OrchidMagenta = Color(0xFFDA70D6)  // Soft orchid magenta
 val VividMagenta = Color(0xFFE100FF)   // Vibrant vivid magenta
@@ -32,7 +29,6 @@ val NeonMagenta = Color(0xFFFF00FF)    // Bright neon magenta
 val PurpleVelvet = Color(0xFF6A1B9A)   // Deep royal purple
 val RoyalViolet = Color(0xFF7F00FF)    // Vivid royal violet
 
-// 🌿 **Greens & Teals** - Fresh & Modern
 val MintGreen = Color(0xFF00E676)      // Refreshing mint green
 val AquaGreen = Color(0xFF1DE9B6)      // Cool aqua green
 val SeafoamGreen = Color(0xFF64FFDA)   // Soft seafoam green
@@ -42,14 +38,12 @@ val JadeGreen = Color(0xFF00A676)      // Deep jade green
 val TealBlue = Color(0xFF00897B)       // Blue-green teal shade
 val DeepCyan = Color(0xFF0097A7)       // Intense deep cyan
 
-// 🎨 **Gradients & Accent Colors**
 val GradientStart = Color(0xFF7F00FF)  // Deep Purple
 val GradientMiddle = Color(0xFFE100FF) // Magenta-Purple Blend
 val GradientEnd = Color(0xFFFF007F)    // Hot Pink
 val CoolCyan = Color(0xFF00FFFF)       // Icy cool cyan
 val SkyTeal = Color(0xFF00B8D4)        // Sky-like teal
 
-// 🌙 **Dark Theme & Neutral Shades**
 val MidnightBlue = Color(0xFF0D47A1)   // Deep midnight blue
 val DarkBlueGrey = Color(0xFF263238)   // Dark navy-like blue-grey
 val SoftLavender = Color(0xFFE6E6FA)   // Soft lavender highlight

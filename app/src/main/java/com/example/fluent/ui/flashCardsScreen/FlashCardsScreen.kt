@@ -1,61 +1,79 @@
 package com.example.fluent.ui.flashCardsScreen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.fluent.R
 import com.example.fluent.navigation.BlurredAppNavigationBar
+import com.example.fluent.ui.categorySelection.CategoriesViewModel
+import com.example.fluent.ui.categorySelection.CategoryManagementDialog
+import com.example.fluent.ui.categorySelection.CategorySelection
+import com.example.fluent.ui.components.FlashCardsContent
 import com.example.fluent.ui.components.FullScreenBlurredBackground
-import dev.chrisbanes.haze.HazeState
-
 
 @Composable
 fun FlashCardsScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: FlashCardsViewModel = hiltViewModel(),
+    categoriesViewModel: CategoriesViewModel = hiltViewModel(),
 ) {
+    val categories = viewModel.categories.collectAsState(initial = emptyList()).value
+    val selectedCategoryId = viewModel.selectedCategoryId.collectAsState().value
+    val uiState by categoriesViewModel.uiState.collectAsState()
+    var showCategoryManagementDialog by remember { mutableStateOf(false) }
+    val cardsData by viewModel.cardsData.collectAsState()
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        FullScreenBlurredBackground(
-//            wallpaperResource = R.drawable.black1,
-            blurRadius = 5.dp,
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 8.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            FullScreenBlurredBackground(
+                blurRadius = 5.dp,
             ) {
-                Text(
-                    text = "Flash Cards",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = Color.White
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(onClick = { /* WE COOKING HERE */ }) {
-                    Text(text = "Next Card")
+                // Display category management dialog
+                if (showCategoryManagementDialog) {
+                    CategoryManagementDialog(
+                        categories = uiState.categories,
+                        onDismiss = { showCategoryManagementDialog = false },
+                        onAddCategory = { newCategoryName ->
+                            categoriesViewModel.addCategory(newCategoryName)
+                        },
+                        onRenameCategory = { category, newName ->
+                            categoriesViewModel.renameCategory(category, newName)
+                        },
+                        categoriesViewModel = categoriesViewModel
+                    )
                 }
+
+                CategorySelection(
+                    categories = categories.map { it.name },
+                    selectedCategory = categories.find { it.id == selectedCategoryId }?.name.orEmpty(),
+                    onCategorySelected = { selectedName ->
+                        val selected = categories.find { it.name == selectedName }
+                        viewModel.selectCategory(selected?.id)
+                    },
+                    onAddCategory = {
+                        showCategoryManagementDialog = true
+                    }
+                )
             }
         }
 
+        // Use the FlashCardsContent from components package
+        FlashCardsContent(
+            cardsData = cardsData,
+            onMoveToBack = { index -> viewModel.moveCardToBack(index) }
+        )
+
+        // App navigation bar
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -65,5 +83,3 @@ fun FlashCardsScreen(
         }
     }
 }
-
-

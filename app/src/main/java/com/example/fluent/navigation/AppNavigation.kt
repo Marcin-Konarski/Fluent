@@ -10,8 +10,8 @@ import androidx.navigation.navArgument
 import com.example.fluent.ui.listWordsScreen.ListWordsScreen
 import com.example.fluent.ui.detailsScreen.DetailsScreen
 import com.example.fluent.ui.addWordScreen.AddWordScreen
-import com.example.fluent.ui.learnWordsScreen.LearnWordsViewModel
 import com.example.fluent.ui.flashCardsScreen.FlashCardsScreen
+import com.example.fluent.ui.learnWordsScreen.LearnWordsViewModel
 import com.example.fluent.ui.learnWordsScreen.LearnWordsScreen
 import com.example.fluent.ui.settingsScreen.SettingsScreen
 import com.example.fluent.ui.theme.AppTheme
@@ -40,7 +40,9 @@ fun AppNavigation(
         startDestination = Screen.Screen2.route
     ) {
         composable(Screen.Screen1.route) {
-            FlashCardsScreen(navController = navController)
+            FlashCardsScreen(
+                navController = navController
+            )
         }
 
         composable(Screen.Screen2.route) {
