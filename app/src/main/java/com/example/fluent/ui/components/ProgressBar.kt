@@ -42,9 +42,6 @@ import com.example.fluent.ui.theme.LocalAppTheme
 
 
 
-import androidx.compose.ui.unit.dp
-
-
 private data class GlitterParticle(
     val id: Int,
     val initialOffset: Float,

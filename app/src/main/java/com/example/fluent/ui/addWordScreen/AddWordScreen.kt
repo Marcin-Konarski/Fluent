@@ -16,15 +16,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForAddWord
 import com.example.fluent.ui.components.AppTextField
-import com.example.fluent.navigation.BlurredAppNavigationBar
-import com.example.fluent.ui.categorySelection.CategoryManagementDialog
 import com.example.fluent.ui.categorySelection.CategoriesViewModel
 import com.example.fluent.ui.components.ConfirmButton
 import com.example.fluent.ui.components.FullScreenBlurredBackground
-import com.example.fluent.ui.categorySelection.CategorySelection
-
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,8 +30,6 @@ fun AddWordScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val categoryNames = state.allCategories.map { it.name }
-    val uiState by categoriesViewModel.uiState.collectAsState()
-    var showCategoryManagementDialog by remember { mutableStateOf(false) }
 
     // Create focus requesters for the text fields
     val wordFieldFocusRequester = remember { FocusRequester() }
@@ -61,122 +53,82 @@ fun AddWordScreen(
     }
 
     FullScreenBlurredBackground(
-        blurRadius = 5.dp
+        navController = navController,
+        showCategorySelection = true,
+        categoriesViewModel = categoriesViewModel,
+        categories = state.allCategories,
+        selectedCategoryId = state.allCategories.find { it.name == state.category }?.id,
+        onCategorySelected = { categoryId ->
+            val categoryName = state.allCategories.find { it.id == categoryId }?.name ?: ""
+            viewModel.onEvent(WordEventForAddWord.SetCategory(categoryName))
+        },
+        showAllCategoryOption = false
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize()
+        // Column for the form fields (Word, Translation, and Save button)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 240.dp)
         ) {
-            Column(
+            // Word input field
+            AppTextField(
+                value = state.word,
+                onValueChange = {
+                    viewModel.onEvent(WordEventForAddWord.SetWordAddWord(it))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        translationFieldFocusRequester.requestFocus()
+                    }
+                ),
+                label = @Composable { Text(text = "Word") },
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 8.dp)
-            ) {
+                    .fillMaxWidth(0.85f)
+                    .focusRequester(wordFieldFocusRequester)
+            )
 
-                // Display words category dialog
-                if (showCategoryManagementDialog) {
-                    CategoryManagementDialog(
-                        categories = uiState.categories,
-                        onDismiss = { showCategoryManagementDialog = false },
-                        onAddCategory = { newCategoryName ->
-                            categoriesViewModel.addCategory(newCategoryName)
-                        },
-                        onRenameCategory = { category, newName ->
-                            categoriesViewModel.renameCategory(category, newName)
-                        },
-                        categoriesViewModel = categoriesViewModel
-                    )
-                }
+            Spacer(modifier = Modifier.height(12.dp))
 
-                CategorySelection(
-                    categories = categoryNames,
-                    selectedCategory = state.category,
-                    onCategorySelected = { category ->
-                        viewModel.onEvent(WordEventForAddWord.SetCategory(category))
-                    },
-                    onAddCategory = {
-                        showCategoryManagementDialog = true
-                    },
-                    showAllOption = true
-                ) {}
-
-                Spacer(modifier = Modifier.height(100.dp))
-
-                // Column for the form fields (Word, Translation, and Save button)
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                        .padding(top = 16.dp)
-                ) {
-                    // Word input field
-                    AppTextField(
-                        value = state.word,
-                        onValueChange = {
-                            viewModel.onEvent(WordEventForAddWord.SetWordAddWord(it))
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onNext = {
-                                translationFieldFocusRequester.requestFocus()
-                            }
-                        ),
-                        label = @Composable { Text(text = "Word") },
-                        modifier = Modifier
-                            .fillMaxWidth(0.85f)
-                            .focusRequester(wordFieldFocusRequester)
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Translation input field
-                    AppTextField(
-                        value = state.translation,
-                        onValueChange = {
-                            viewModel.onEvent(WordEventForAddWord.SetTranslation(it))
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                if (state.word.isNotBlank() && state.translation.isNotBlank() && state.category.isNotBlank()) {
-                                    viewModel.onEvent(WordEventForAddWord.SaveWordAddWord)
-                                }
-                            }
-                        ),
-                        label = @Composable { Text(text = "Translation") },
-                        modifier = Modifier
-                            .fillMaxWidth(0.85f)
-                            .focusRequester(translationFieldFocusRequester)
-                    )
-
-                    Spacer(modifier = Modifier.height(72.dp))
-
-                    // Confirm Button to save the word
-                    ConfirmButton(
-                        onClick = {
-                            if (state.word.isNotBlank() && state.translation.isNotBlank() && state.category.isNotBlank()) {
-                                viewModel.onEvent(WordEventForAddWord.SaveWordAddWord)
-                            }
-                        },
-                        buttonText = "Save"
-                    )
-                }
-            }
-
-            Box(
+            // Translation input field
+            AppTextField(
+                value = state.translation,
+                onValueChange = {
+                    viewModel.onEvent(WordEventForAddWord.SetTranslation(it))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        if (state.word.isNotBlank() && state.translation.isNotBlank() && state.category.isNotBlank()) {
+                            viewModel.onEvent(WordEventForAddWord.SaveWordAddWord)
+                        }
+                    }
+                ),
+                label = @Composable { Text(text = "Translation") },
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-            ) {
-                BlurredAppNavigationBar(navController = navController)
-            }
+                    .fillMaxWidth(0.85f)
+                    .focusRequester(translationFieldFocusRequester)
+            )
+
+            Spacer(modifier = Modifier.height(72.dp))
+
+            // Confirm Button to save the word
+            ConfirmButton(
+                onClick = {
+                    if (state.word.isNotBlank() && state.translation.isNotBlank() && state.category.isNotBlank()) {
+                        viewModel.onEvent(WordEventForAddWord.SaveWordAddWord)
+                    }
+                },
+                buttonText = "Save"
+            )
         }
     }
 }

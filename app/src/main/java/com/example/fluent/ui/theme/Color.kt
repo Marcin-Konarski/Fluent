@@ -51,3 +51,5 @@ val OffWhite = Color(0xFFF5F5F5)       // Soft white for backgrounds
 val CharcoalGrey = Color(0xFF37474F)   // Dark grey for depth
 val PureBlack = Color(0xFF000000)      // Absolute black
 val SoftBlack = Color(0xFF121212)      // Slightly muted black
+
+val BackGroundColor = Color(0xFF000000)

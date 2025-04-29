@@ -73,7 +73,7 @@ fun BottomBarTabs(
                                 onTabSelected(tab)
                             }
                         }
-                        .padding(top = 6.dp), // Padding at the top to move content down
+                        .padding(top = 6.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
@@ -82,7 +82,6 @@ fun BottomBarTabs(
                         contentDescription = "tab ${tab.title}",
                         modifier = Modifier
                             .scale(0.85f)
-//                            .padding(bottom = 2.dp) // Increased space between icon and text
                     )
                     Text(
                         text = tab.title,

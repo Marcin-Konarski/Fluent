@@ -65,50 +65,30 @@ fun LearnWordsScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         FullScreenBlurredBackground(
-            blurRadius = 5.dp,
+            navController = navController,
+            showCategorySelection = true,
+            categoriesViewModel = categoriesViewModel,
+            categories = categories,
+            selectedCategoryId = selectedCategoryId,
+            onCategorySelected = { categoryId ->
+                viewModel.selectCategory(categoryId)
+            }
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 8.dp)
+                    .padding(top = 80.dp)
             ) {
-                // Display category management dialog
-                if (showCategoryManagementDialog) {
-                    CategoryManagementDialog(
-                        categories = uiState.categories,
-                        onDismiss = { showCategoryManagementDialog = false },
-                        onAddCategory = { newCategoryName ->
-                            categoriesViewModel.addCategory(newCategoryName)
-                        },
-                        onRenameCategory = { category, newName ->
-                            categoriesViewModel.renameCategory(category, newName)
-                        },
-                        categoriesViewModel = categoriesViewModel
-                    )
-                }
-
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    // Display all categories in a row
-                    CategorySelection(
-                        categories = categories.map { it.name },
-                        selectedCategory = categories.find { it.id == selectedCategoryId }?.name.orEmpty(),
-                        onCategorySelected = { selectedName ->
-                            val selected = categories.find { it.name == selectedName }
-                            viewModel.selectCategory(selected?.id)
-                        },
-                        onAddCategory = {
-                            showCategoryManagementDialog = true
-                        }
-                    )
-
                     // Progress Bar
-                    Column {
+                    Column(
+                        modifier = Modifier.padding(start = 30.dp, end = 30.dp)
+                    ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(end = 16.dp)
                         ) {
                             Column(horizontalAlignment = Alignment.End) {
                                 Text(
@@ -123,11 +103,12 @@ fun LearnWordsScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
+                                .padding(start = 12.dp)
                         ) {
                             Text(
                                 text = "Learned: $learnedWords",
-                                modifier = Modifier.offset(x = -10.dp)
+                                modifier = Modifier
+                                    .offset(x = -10.dp)
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
@@ -141,7 +122,7 @@ fun LearnWordsScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(start = 16.dp, end = 16.dp, top = 120.dp)
+                            .padding(start = 10.dp, end = 10.dp, top = 120.dp)
                             .imePadding(),
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -204,14 +185,6 @@ fun LearnWordsScreen(
                         )
                     }
                 }
-            }
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-            ) {
-                BlurredAppNavigationBar(navController = navController)
             }
         }
     }

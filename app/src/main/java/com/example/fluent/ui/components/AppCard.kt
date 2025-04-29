@@ -24,43 +24,6 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun AppCard(
-    word: String,
-    translation: String,
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null
-) {
-    ElevatedCard(
-        elevation = CardDefaults.elevatedCardElevation(
-            defaultElevation = 4.dp,
-            pressedElevation = 8.dp,
-            hoveredElevation = 10.dp,
-            focusedElevation = 6.dp
-        ),
-        shape = MaterialTheme.shapes.medium,
-        modifier = modifier
-            .then(
-                if (onClick != null) {
-                    Modifier.clickable(onClick = onClick)
-                } else {
-                    Modifier
-                }
-            )
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = word,
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = translation)
-        }
-    }
-}
-
-
-
-@Composable
 fun GlossyAppCard(
     word: String,
     translation: String,

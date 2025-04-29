@@ -67,7 +67,7 @@ fun CategoryManagementDialog(
                 .fillMaxWidth(0.95f)
                 .wrapContentHeight(),
             shape = dialogShape,
-            color = Color.Transparent // Important! We don't want default Surface color
+            color = Color.Transparent
         ) {
             Box(
                 modifier = Modifier
@@ -78,8 +78,8 @@ fun CategoryManagementDialog(
                 Box(
                     modifier = Modifier
                         .matchParentSize()
-                        .blur(50.dp)
-                        .background(Color.Black.copy(alpha = 0.7f))
+                        .blur(100.dp)
+                        .background(Color.Black.copy(alpha = 0.9f))
                         .clip(dialogShape)
                 )
 

@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.update
+
 
 @HiltViewModel
 class FlashCardsViewModel @Inject constructor(
@@ -38,10 +40,6 @@ class FlashCardsViewModel @Inject constructor(
                 }
         }
 
-        // Card data state (now mutable list to support reordering)
-        private val _cardsData = MutableStateFlow<List<Word>>(emptyList())
-        val cardsData: StateFlow<List<Word>> = _cardsData.asStateFlow()
-
         // Initialize with sample data
         init {
                 loadFlashCards()
@@ -61,14 +59,19 @@ class FlashCardsViewModel @Inject constructor(
                 }
         }
 
-        // Move card to back of stack (implementing the boomerang effect behavior)
+        // Card data state (now mutable list to support reordering)
+        private val _cardsData = MutableStateFlow<List<Word>>(emptyList())
+        val cardsData = _cardsData.asStateFlow()
+
         fun moveCardToBack(index: Int) {
-                val currentCards = _cardsData.value.toMutableList()
-                if (currentCards.isNotEmpty() && index < currentCards.size) {
-                        val card = currentCards[index]
-                        currentCards.removeAt(index)
-                        currentCards.add(card)
-                        _cardsData.value = currentCards
+                _cardsData.update { currentCards ->
+                        if (index < 0 || index >= currentCards.size) return@update currentCards
+
+                        // Create a new list with the card moved to the back
+                        val mutableList = currentCards.toMutableList()
+                        val cardToMove = mutableList.removeAt(index)
+                        mutableList.add(cardToMove)
+                        mutableList
                 }
         }
 }

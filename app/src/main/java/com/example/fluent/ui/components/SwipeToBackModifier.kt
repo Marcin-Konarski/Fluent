@@ -30,18 +30,27 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
+
 fun Modifier.swipeToBack(
     onMoveToBack: () -> Unit
 ): Modifier = composed {
     val offsetY = remember { Animatable(0f) }
     val rotation = remember { Animatable(0f) }
     var leftSide by remember { mutableStateOf(true) }
-    var clearedHurdle by remember { mutableStateOf(false) }
+    var animationInProgress by remember { mutableStateOf(false) }
 
     pointerInput(Unit) {
         val decay = splineBasedDecay<Float>(this)
         coroutineScope {
             while (true) {
+                // Don't process new inputs if animation is in progress
+                if (animationInProgress) {
+                    awaitPointerEventScope {
+                        awaitFirstDown()
+                    }
+                    continue
+                }
+
                 offsetY.stop()
                 val velocityTracker = VelocityTracker()
                 awaitPointerEventScope {
@@ -73,6 +82,7 @@ fun Modifier.swipeToBack(
                     launch { rotation.animateTo(targetValue = 0f, initialVelocity = velocity) }
                 } else {
                     // Enough velocity to fling the card to the back
+                    animationInProgress = true
                     val boomerangDuration = 600
                     val maxDistanceToFling = (size.height * 2).toFloat()
                     val maxRotations = 3
@@ -85,6 +95,9 @@ fun Modifier.swipeToBack(
                         360f * maxRotations
                     )
                     val rotationOvershoot = rotationToFling + 12f
+
+                    var moveToBackCalled = false
+                    val threshold = -size.height * 1.5f
 
                     val animationJobs = listOf(
                         launch {
@@ -102,24 +115,38 @@ fun Modifier.swipeToBack(
                         },
                         launch {
                             offsetY.animateTo(
-                                targetValue = 0f,
+                                targetValue = -distanceToFling,
                                 initialVelocity = velocity,
                                 animationSpec = keyframes {
-                                    durationMillis = boomerangDuration
+                                    durationMillis = boomerangDuration / 2
                                     -distanceToFling at (boomerangDuration / 2) with easeInOutEasing
-                                    40f at boomerangDuration - 70
                                 }
                             ) {
-                                if (value <= -size.height * 2 && !clearedHurdle) {
-                                    onMoveToBack()
-                                    clearedHurdle = true
+                                // Call moveToBack when we pass the threshold but only once
+                                if (value <= threshold && !moveToBackCalled) {
+                                    moveToBackCalled = true
                                 }
                             }
+
+                            // Only invoke the callback after the card has moved far away
+                            if (moveToBackCalled) {
+                                onMoveToBack()
+                            }
+
+                            // Return the card to the original position
+                            offsetY.animateTo(
+                                targetValue = 0f,
+                                animationSpec = keyframes {
+                                    durationMillis = boomerangDuration / 2
+                                    40f at boomerangDuration - 70
+                                    0f at boomerangDuration
+                                }
+                            )
+                            animationInProgress = false
                         }
                     )
 
                     animationJobs.joinAll()
-                    clearedHurdle = false
                 }
             }
         }

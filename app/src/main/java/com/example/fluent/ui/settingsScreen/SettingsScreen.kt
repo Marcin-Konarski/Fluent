@@ -39,9 +39,7 @@ fun SettingsScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        FullScreenBlurredBackground(
-            blurRadius = 5.dp,
-        ) {
+        FullScreenBlurredBackground() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()

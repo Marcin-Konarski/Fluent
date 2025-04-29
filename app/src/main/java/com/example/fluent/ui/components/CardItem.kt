@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,7 +28,7 @@ fun CardItem(
     word: Word
 ) {
     val cardWidth = 300.dp
-    val cardHeight = 250.dp
+    val cardHeight = 200.dp
     val appTheme = LocalAppTheme.current
 
     Card(
@@ -91,11 +92,13 @@ fun FlashCardsContent(
             .padding(top = 100.dp),
         contentAlignment = Alignment.Center
     ) {
+        // Use the word.id as the key to ensure stable identity
         cardsData.forEachIndexed { idx, word ->
             key(word.id) {
                 SwipeableCard(
                     order = idx,
                     word = word,
+                    totalCards = cardsData.size,
                     onMoveToBack = { onMoveToBack(idx) }
                 )
             }
@@ -107,14 +110,18 @@ fun FlashCardsContent(
 fun SwipeableCard(
     order: Int,
     word: Word,
+    totalCards: Int,
     onMoveToBack: () -> Unit
 ) {
     val spacing = 8.dp
     val maxVisibleCards = 8
 
+    // Keep track of this card's current order in the stack
+    val currentOrder = remember(order, word.id) { order }
+
     val animatedYOffset by animateDpAsState(
-        targetValue = if (order < maxVisibleCards) {
-            spacing * order
+        targetValue = if (currentOrder < maxVisibleCards) {
+            spacing * currentOrder
         } else {
             spacing * (maxVisibleCards - 1)
         }
@@ -124,7 +131,8 @@ fun SwipeableCard(
         modifier = Modifier
             .offset { IntOffset(x = 0, y = animatedYOffset.roundToPx()) }
             .swipeToBack { onMoveToBack() }
-            .zIndex(10f - order)
+            // Update zIndex calculation to ensure proper stacking
+            .zIndex((totalCards - currentOrder).toFloat())
     ) {
         CardItem(word = word)
     }

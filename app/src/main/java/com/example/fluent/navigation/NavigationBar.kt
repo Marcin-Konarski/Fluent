@@ -1,12 +1,10 @@
 package com.example.fluent.navigation
 
 
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import dev.chrisbanes.haze.HazeState
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
@@ -30,11 +27,9 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.currentBackStackEntryAsState
-
 
 
 @Composable
@@ -44,12 +39,16 @@ fun BlurredAppNavigationBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val selectedTabIndex = when (currentRoute) {
-        Screen.Screen1.route -> 0
-        Screen.Screen2.route -> 1
-        Screen.Screen3.route -> 2
-        Screen.Screen4.route -> 3
-        Screen.Screen5.route -> 4
+    // Check if the current route is a Details route
+    val isDetailsRoute = currentRoute?.startsWith("details/") ?: false
+
+    // If we're on the Details screen, we want to visually show the Words tab as selected
+    val selectedTabIndex = when {
+        currentRoute == Screen.Screen1.route -> 0
+        currentRoute == Screen.Screen2.route || isDetailsRoute -> 1 // Treat Details screen as part of Words tab
+        currentRoute == Screen.Screen3.route -> 2
+        currentRoute == Screen.Screen4.route -> 3
+        currentRoute == Screen.Screen5.route -> 4
         else -> -1
     }
 
@@ -139,7 +138,6 @@ fun BlurredAppNavigationBar(
             }
         }
 
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -159,7 +157,15 @@ fun BlurredAppNavigationBar(
                         else -> return@BottomBarTabs
                     }
 
-                    if (currentRoute != route) {
+                    // Special handling for the Words tab (Screen2) when on Details screen
+                    if (isDetailsRoute && index == 1) {
+                        // Navigate back to words list without adding to back stack
+                        navController.navigate(Screen.Screen2.route) {
+                            popUpTo(Screen.Screen2.route) {
+                                inclusive = true
+                            }
+                        }
+                    } else if (currentRoute != route) {
                         navController.navigate(route) {
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
@@ -169,7 +175,6 @@ fun BlurredAppNavigationBar(
                         }
                     }
                 }
-
             )
         }
     }
