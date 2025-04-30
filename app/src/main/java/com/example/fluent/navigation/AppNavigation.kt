@@ -84,7 +84,6 @@ fun AppNavigation(
 
             DetailsScreen(
                 navController = navController,
-                itemId = itemId,
                 onBackClick = { navController.popBackStack() }
             )
         }

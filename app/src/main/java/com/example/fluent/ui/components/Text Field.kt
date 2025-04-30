@@ -21,7 +21,6 @@ fun AppTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
-    colors: TextFieldColors = TextFieldDefaults.colors()
 ) {
     OutlinedTextField(
         value = value,

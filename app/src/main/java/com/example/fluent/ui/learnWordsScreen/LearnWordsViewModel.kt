@@ -8,10 +8,7 @@ import com.example.fluent.data.CategoryDao
 import com.example.fluent.data.Word
 import com.example.fluent.data.WordDao
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -65,34 +62,31 @@ class LearnWordsViewModel @Inject constructor(
         get() = savedStateHandle.get<Int>(getCorrectAnswersKey()) ?: 0
         set(value) = savedStateHandle.set(getCorrectAnswersKey(), value)
 
-    // Flag to track if test was completed (progress = 100%)
     private var testCompleted: Boolean
         get() = savedStateHandle.get<Boolean>(getTestCompletedKey()) ?: false
         set(value) = savedStateHandle.set(getTestCompletedKey(), value)
 
-    // Save the word IDs in order to maintain word order
     private var savedWordOrder: List<Int>
         get() = savedStateHandle.get<List<Int>>(getWordOrderKey()) ?: emptyList()
         set(value) = savedStateHandle.set(getWordOrderKey(), value)
+
+    private val _showCompletionDialog = MutableStateFlow(false)
+    val showCompletionDialog: StateFlow<Boolean> = _showCompletionDialog
+
+    fun onDialogShown() {
+        _showCompletionDialog.value = false
+    }
 
     init {
         println("LearnWordsViewModel initialized")
         _progress.value = 0f
 
-        // Observe changes to selected category
         viewModelScope.launch {
             _selectedCategoryId.collectLatest { categoryId ->
-                // Save the category ID in savedStateHandle
                 savedStateHandle["selectedCategoryId"] = categoryId
-
-                // Load words for the selected category
                 fetchWordsForCategory(categoryId)
-
-                // Reset UI states when changing categories
                 _userInput.value = ""
                 _correctWord.value = null
-
-                // Load category-specific progress
                 correctAnswers = correctAnswersPerCategory
                 updateLearnedAndLeftWords()
                 calculateProgress()
@@ -116,37 +110,24 @@ class LearnWordsViewModel @Inject constructor(
 
             wordFlow.collect { newWords ->
                 if (newWords.isNotEmpty()) {
-                    // Check if we have saved word order for this category
                     val wordIds = savedWordOrder
 
                     if (wordIds.isEmpty() || testCompleted) {
-                        // First time loading this category OR test was completed
-                        // Shuffle the words and save the order
                         wordsList = newWords.shuffled().toMutableList()
                         savedWordOrder = wordsList.map { it.id }
                         testCompleted = false
                     } else {
-                        // We have a saved order - reconstruct it and append new words
                         val existingWords = mutableListOf<Word>()
                         val newWordsMap = newWords.associateBy { it.id }
-
-                        // First add words in the saved order (if they still exist)
                         for (id in wordIds) {
                             newWordsMap[id]?.let { existingWords.add(it) }
                         }
-
-                        // Now find words that exist in newWords but not in our saved order
                         val remainingWords = newWords.filter { !wordIds.contains(it.id) }
-
-                        // Append new words at the end
                         existingWords.addAll(remainingWords)
                         wordsList = existingWords
-
-                        // Update saved order to include new words
                         savedWordOrder = wordsList.map { it.id }
                     }
 
-                    // Ensure currentIndex is valid for this word list
                     if (currentIndex >= wordsList.size) {
                         currentIndex = 0
                     }
@@ -155,7 +136,6 @@ class LearnWordsViewModel @Inject constructor(
                     updateLearnedAndLeftWords()
                     calculateProgress()
                 } else {
-                    // Handle empty category case
                     wordsList.clear()
                     _currentWord.value = null
                     _leftWords.value = 0
@@ -177,25 +157,29 @@ class LearnWordsViewModel @Inject constructor(
                     calculateProgress()
                 }
             }
+
             is WordEventForLearnWordsScreen.SetWordLearnWords -> {
                 _currentWord.value = _currentWord.value?.copy(word = event.word)
             }
+
             is WordEventForLearnWordsScreen.SetTranslation -> {
                 _currentWord.value = _currentWord.value?.copy(translation = event.translation)
             }
+
             is WordEventForLearnWordsScreen.SetWordInputLearnWords -> {
                 _userInput.value = event.wordInput
             }
+
             is WordEventForLearnWordsScreen.CheckAnswer -> {
                 if (_userInput.value.equals(_currentWord.value?.word, ignoreCase = true)) {
                     _correctWord.value = null
                     correctAnswers++
-                    correctAnswersPerCategory = correctAnswers // Save progress for this category
+                    correctAnswersPerCategory = correctAnswers
                     updateLearnedAndLeftWords()
 
-                    // Check if all words have been learned
                     if (correctAnswers >= wordsList.size) {
                         testCompleted = true
+                        _showCompletionDialog.value = true // ✅ Correctly trigger dialog
                     }
 
                     onEvent(WordEventForLearnWordsScreen.NextWordLearnWords)
@@ -223,46 +207,12 @@ class LearnWordsViewModel @Inject constructor(
     }
 
     fun resetLearningProgress() {
-        // Mark test as completed to ensure words will be reshuffled on next load
         testCompleted = true
-
-        // Reset progress
         correctAnswers = 0
         correctAnswersPerCategory = 0
         currentIndex = 0
         _userInput.value = ""
         _correctWord.value = null
-
-        // Reset the word list with shuffled order
         fetchWordsForCategory(_selectedCategoryId.value)
-    }
-
-    // Reset all categories (optional functionality)
-    fun resetAllCategoriesProgress() {
-        viewModelScope.launch {
-            // Clear all saved state for all categories
-            categories.collect { categoryList ->
-                categoryList.forEach { category ->
-                    savedStateHandle.remove<Int>("currentIndex_${category.id}")
-                    savedStateHandle.remove<Int>("correctAnswers_${category.id}")
-                    savedStateHandle.remove<List<Int>>("wordOrder_${category.id}")
-                    savedStateHandle.remove<Boolean>("testCompleted_${category.id}")
-                }
-                // Also clear for "all words" case
-                savedStateHandle.remove<Int>("currentIndex_0")
-                savedStateHandle.remove<Int>("correctAnswers_0")
-                savedStateHandle.remove<List<Int>>("wordOrder_0")
-                savedStateHandle.remove<Boolean>("testCompleted_0")
-            }
-
-            // Reset current category
-            correctAnswers = 0
-            correctAnswersPerCategory = 0
-            currentIndex = 0
-            testCompleted = true
-
-            // Reload words
-            fetchWordsForCategory(_selectedCategoryId.value)
-        }
     }
 }

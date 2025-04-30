@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForDeleteWord
-import com.example.fluent.ui.components.AppButton
 import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.ui.components.FullScreenBlurredBackground
 import androidx.compose.foundation.clickable
@@ -23,15 +22,12 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
-import com.example.fluent.WordEventForAddWord
 import com.example.fluent.ui.components.ConfirmButton
-import kotlin.text.isNotBlank
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsScreen(
     navController: NavHostController,
-    itemId: Int,
     viewModel: DetailsViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
