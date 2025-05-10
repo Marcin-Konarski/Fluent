@@ -21,6 +21,10 @@ import com.example.fluent.navigation.Screen
 import com.example.fluent.ui.categorySelection.CategoriesViewModel
 import com.example.fluent.ui.components.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.platform.LocalContext
+import com.example.fluent.R
+
+
 
 @Composable
 fun LearnWordsScreen(
@@ -72,7 +76,7 @@ fun LearnWordsScreen(
                 Column(modifier = Modifier.fillMaxSize()) {
                     // Progress Bar
                     Column(
-                        modifier = Modifier.padding(start = 30.dp, end = 30.dp)
+                        modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                     ) {
                         Box(modifier = Modifier.fillMaxWidth()) {
                             Column(horizontalAlignment = Alignment.End) {
@@ -109,7 +113,7 @@ fun LearnWordsScreen(
                         ) {
                             Surface(
                                 shape = RoundedCornerShape(20.dp),
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.secondary,
                                 modifier = Modifier
                                     .padding(16.dp)
                                     .fillMaxWidth()
@@ -134,8 +138,15 @@ fun LearnWordsScreen(
                                             .padding(8.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        // 🎬 Placeholder for video
-                                        Text(text = "🎬 (video placeholder)", color = Color.Gray)
+                                        //video
+                                        VideoPlayer(
+                                            context = LocalContext.current,
+                                            resId = R.raw.filmik,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(200.dp)
+                                        )
+
                                     }
 
                                     Spacer(modifier = Modifier.height(24.dp))
