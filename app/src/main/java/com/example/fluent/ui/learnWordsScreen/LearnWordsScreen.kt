@@ -1,28 +1,10 @@
 package com.example.fluent.ui.learnWordsScreen
 
-
-import androidx.annotation.Nullable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,18 +12,15 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fluent.WordEventForLearnWordsScreen
-import com.example.fluent.ui.components.AppTextField
 import com.example.fluent.navigation.Screen
 import com.example.fluent.ui.categorySelection.CategoriesViewModel
-import com.example.fluent.ui.components.ConfirmButton
-import com.example.fluent.ui.components.FullScreenBlurredBackground
-import com.example.fluent.ui.components.AnimatedProgressBar
-import com.example.fluent.ui.components.GlassyAlertDialog
-import org.jetbrains.annotations.NotNull
-
+import com.example.fluent.ui.components.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun LearnWordsScreen(
@@ -71,7 +50,6 @@ fun LearnWordsScreen(
             viewModel.onDialogShown()
         }
     }
-
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -123,22 +101,57 @@ fun LearnWordsScreen(
                         }
                     }
 
+                    //  Custom Dialog, when words finished
                     if (showDialog) {
-                        GlassyAlertDialog(
-                            title = "Congrats!",
-                            text = "You have finished all words from '$selectedCategoryName' category",
-                            confirmButtonText = "Finish",
-                            onConfirm = {
-                                showDialog = false
-                                viewModel.resetLearningProgress()
-                                navController.navigate(Screen.Screen4.route) {
-                                    popUpTo(Screen.Screen4.route) { inclusive = true }
-                                }
-                            },
-                            onDismissRequest = { showDialog = false }
-                        )
-                    }
+                        Dialog(
+                            onDismissRequest = { showDialog = false },
+                            properties = DialogProperties(dismissOnClickOutside = false)
+                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(20.dp),
+                                color = Color.White,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(24.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "🎉Congratulations!🎉",
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
 
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    Box(
+                                        modifier = Modifier
+                                            .height(200.dp)
+                                            .fillMaxWidth()
+                                            .padding(8.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        // 🎬 Placeholder for video
+                                        Text(text = "🎬 (video placeholder)", color = Color.Gray)
+                                    }
+
+                                    Spacer(modifier = Modifier.height(24.dp))
+
+                                    Button(
+                                        onClick = {
+                                            showDialog = false
+                                            viewModel.resetLearningProgress()
+                                        }
+                                    ) {
+                                        Text("Start New Game")
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     // Main Content
                     Column(
@@ -180,7 +193,6 @@ fun LearnWordsScreen(
                                 keyboardActions = KeyboardActions(
                                     onDone = {
                                         viewModel.onEvent(WordEventForLearnWordsScreen.CheckAnswer)
-                                        // Don't hide the keyboard unless learning is done
                                         if (leftWords == 0) {
                                             keyboardController?.hide()
                                         }
