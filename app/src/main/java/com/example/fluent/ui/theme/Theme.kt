@@ -1,12 +1,14 @@
 package com.example.fluent.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme // Dodaj ten import
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.lightColorScheme // Nadal używamy lightColorScheme jako podstawy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.darkColorScheme
 
 // Definicja motywów (enum)
 enum class AppTheme(
@@ -74,21 +76,42 @@ enum class AppTheme(
     )
 }
 
-// Funkcja generująca ColorScheme na podstawie AppTheme
+
+
+
+@Composable
 fun getThemeColorScheme(appTheme: AppTheme): ColorScheme {
-    return lightColorScheme(
-        primary = appTheme.primaryColor,
-        secondary = appTheme.secondaryColor,
-        tertiary = appTheme.tertiaryColor,
-        background = OffWhite,
-        surface = OffWhite,
-        onPrimary = OffWhite,
-        onSecondary = OffWhite,
-        onTertiary = OffWhite,
-        onBackground = OffWhite,
-        onSurface = OffWhite,
-    )
+    val isSystemDark = isSystemInDarkTheme()
+
+    return if (isSystemDark) {
+        darkColorScheme(
+            primary = appTheme.primaryColor,
+            secondary = appTheme.secondaryColor,
+            tertiary = appTheme.tertiaryColor,
+            background = Color(0xFF121212), // typowe tło dark mode
+            surface = Color(0xFF121212),
+            onPrimary = Color.White,
+            onSecondary = Color.White,
+            onTertiary = Color.White,
+            onBackground = Color.White,
+            onSurface = Color.White
+        )
+    } else {
+        lightColorScheme(
+            primary = appTheme.primaryColor,
+            secondary = appTheme.secondaryColor,
+            tertiary = appTheme.tertiaryColor,
+            background = Color.White,
+            surface = Color.White,
+            onPrimary = Color.Black,
+            onSecondary = Color.Black,
+            onTertiary = Color.Black,
+            onBackground = Color.Black,
+            onSurface = Color.Black
+        )
+    }
 }
+
 
 // Lokalna kompozycja dla aktualnego motywu
 val LocalAppTheme = staticCompositionLocalOf { AppTheme.MIDNIGHT_MYSTERY }
@@ -100,7 +123,7 @@ fun FluentTheme(
 ) {
     CompositionLocalProvider(LocalAppTheme provides appTheme) {
         MaterialTheme(
-            colorScheme = getThemeColorScheme(appTheme),
+            colorScheme = getThemeColorScheme(appTheme), // Teraz getThemeColorScheme jest Composable
             content = content
         )
     }

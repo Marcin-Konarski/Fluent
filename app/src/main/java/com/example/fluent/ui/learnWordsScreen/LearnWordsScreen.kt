@@ -23,7 +23,7 @@ import com.example.fluent.ui.components.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.platform.LocalContext
 import com.example.fluent.R
-
+import com.example.fluent.ui.theme.SoftBlack
 
 
 @Composable
@@ -126,7 +126,7 @@ fun LearnWordsScreen(
                                     Text(
                                         text = "🎉Congratulations!🎉",
                                         style = MaterialTheme.typography.headlineSmall,
-                                        color = MaterialTheme.colorScheme.primary
+                                        color = SoftBlack
                                     )
 
                                     Spacer(modifier = Modifier.height(16.dp))
